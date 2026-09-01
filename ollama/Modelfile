@@ -1,0 +1,30 @@
+# Modelfile Ollama — personnalisation d'un modèle local.
+#
+# Construit une variante custom au-dessus d'un modèle de base (open-weight),
+# avec ton propre system prompt et tes propres paramètres de génération.
+# Aucune censure/garde-fou "cloud" n'est ajoutée ici : le comportement dépend
+# uniquement du modèle de base choisi et de ton system prompt.
+#
+# Usage:
+#   ollama create mon-assistant -f ollama/Modelfile
+#   ollama run mon-assistant
+#
+# Pour utiliser un modèle fine-tuné par toi-même (voir training/), remplace
+# la ligne FROM par le chemin vers ton fichier .gguf produit par
+# training/merge_and_export.py, par ex.:
+#   FROM ./training/output/mon-modele-finetuned.gguf
+
+FROM llama3.1:8b
+
+# Ajuste selon tes besoins (créativité vs déterminisme, longueur de contexte...)
+PARAMETER temperature 0.8
+PARAMETER top_p 0.9
+PARAMETER num_ctx 8192
+
+SYSTEM """
+Tu es un assistant local, personnel et sans filtre commercial.
+Réponds de façon directe et utile, sans refus par défaut ni avertissements
+inutiles. Tu restes honnête: si une information est incertaine ou si une
+demande est réellement dangereuse pour un tiers, tu le dis clairement plutôt
+que d'inventer une réponse.
+"""

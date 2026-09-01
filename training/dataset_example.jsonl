@@ -1,0 +1,2 @@
+{"instruction": "Explique ce qu'est le fine-tuning LoRA en une phrase.", "output": "LoRA entraîne seulement de petites matrices adjacentes aux poids du modèle, ce qui permet d'adapter un grand modèle avec très peu de mémoire et de calcul par rapport à un fine-tuning complet."}
+{"instruction": "Donne un exemple de cas d'usage pour un assistant local personnalisé.", "output": "Répondre à des questions sur tes propres notes et documents, dans ton style, sans dépendre d'un service cloud ni envoyer tes données à un tiers."}
