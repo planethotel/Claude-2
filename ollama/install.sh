@@ -93,29 +93,36 @@ ok "Modele telecharge"
 # --- 5. Creation de ton modele personnalise ---------------------------------
 RACINE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MF="$RACINE/modelfiles/mon-ia.Modelfile"
+NOM="$MODELE"   # bascule sur "mon-ia" uniquement si sa creation reussit
 if [ -f "$MF" ]; then
   info "Construction de 'mon-ia' a partir de $MODELE..."
   TMP="$(mktemp)"
   sed "s|^FROM .*|FROM $MODELE|" "$MF" > "$TMP"
-  ollama create mon-ia -f "$TMP"
+  if ollama create mon-ia -f "$TMP"; then
+    NOM="mon-ia"
+    ok "Modele 'mon-ia' cree — edite $MF puis relance pour changer sa personnalite"
+  else
+    # On NE bascule PAS sur 'mon-ia' : il n'existe pas, et 'ollama run' irait
+    # le chercher sur le registre au lieu d'echouer proprement.
+    avert "'ollama create' a echoue. Le modele de base '$MODELE' reste utilisable."
+  fi
   rm -f "$TMP"
-  ok "Modele 'mon-ia' cree — edite $MF puis relance pour changer sa personnalite"
 fi
 
 # --- 6. Verification reelle -------------------------------------------------
-info "Test de generation..."
-REPONSE="$(ollama run mon-ia "Reponds exactement: PRET" 2>/dev/null | tr -d '\r' | head -3)"
+info "Test de generation sur '$NOM' (peut prendre une minute sur CPU)..."
+REPONSE="$(ollama run "$NOM" "Reponds exactement: PRET" 2>/dev/null | tr -d '\r' | head -3)"
 if [ -n "$REPONSE" ]; then
   ok "Le modele repond : $REPONSE"
 else
-  avert "Pas de reponse au test. Essaie a la main : ollama run mon-ia"
+  avert "Pas de reponse au test. Essaie a la main : ollama run $NOM"
 fi
 
 cat <<FIN
 
 $(printf "${VERT}=== C'est pret ===${RAZ}")
 
-  Discuter            ollama run mon-ia
+  Discuter            ollama run $NOM
   Lister les modeles  ollama list
   API locale          curl http://127.0.0.1:11434/api/generate \\
                         -d '{"model":"mon-ia","prompt":"Salut","stream":false}'

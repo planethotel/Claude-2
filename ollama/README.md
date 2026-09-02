@@ -84,6 +84,16 @@ ollama create mon-ia -f modelfiles/mon-ia.Modelfile
 
 Effet immédiat, aucun entraînement nécessaire.
 
+**Avant de lancer `ollama create`, vérifie ta syntaxe :**
+
+```bash
+python verifier-modelfile.py modelfiles/mon-ia.Modelfile
+```
+
+Le piège classique : Ollama **n'accepte aucun commentaire en fin de ligne
+`PARAMETER`**. `PARAMETER temperature 0.8  # créativité` échoue avec
+`invalid float value` — le commentaire doit être sur sa propre ligne.
+
 ## L'entraîner
 
 Voir **[finetune/README.md](finetune/README.md)** — fine-tuning LoRA sur tes

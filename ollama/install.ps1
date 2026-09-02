@@ -73,22 +73,39 @@ Ok "Modele telecharge"
 
 # --- 5. Ton modele personnalise -------------------------------------------
 $Source = Join-Path $PSScriptRoot "modelfiles\mon-ia.Modelfile"
+$Nom = $Modele   # bascule sur "mon-ia" uniquement si sa creation reussit
 if (Test-Path $Source) {
     Info "Construction de 'mon-ia'..."
     $Tmp = Join-Path $env:TEMP "mon-ia.Modelfile"
     (Get-Content $Source) -replace '^FROM .*', "FROM $Modele" | Set-Content $Tmp -Encoding UTF8
     ollama create mon-ia -f $Tmp
+    $CodeCreate = $LASTEXITCODE
     Remove-Item $Tmp -ErrorAction SilentlyContinue
-    if ($LASTEXITCODE -eq 0) { Ok "Modele 'mon-ia' cree - edite $Source pour changer sa personnalite" }
+    if ($CodeCreate -eq 0) {
+        $Nom = "mon-ia"
+        Ok "Modele 'mon-ia' cree - edite $Source pour changer sa personnalite"
+    } else {
+        # On NE bascule PAS sur 'mon-ia' : il n'existe pas, et 'ollama run' irait
+        # le chercher sur le registre au lieu d'echouer proprement.
+        Avert "'ollama create' a echoue. Le modele de base '$Modele' reste utilisable."
+    }
 } else {
     Avert "modelfiles\mon-ia.Modelfile introuvable : seul '$Modele' est disponible."
 }
 
 # --- 6. Verification -------------------------------------------------------
-$Nom = if (Test-Path $Source) { "mon-ia" } else { $Modele }
-Info "Test de generation..."
-$Reponse = (ollama run $Nom "Reponds exactement: PRET" 2>$null | Out-String).Trim()
-if ($Reponse) { Ok "Le modele repond : $Reponse" } else { Avert "Pas de reponse. Essaie a la main : ollama run $Nom" }
+# On interroge l'API plutot que 'ollama run' : pas de sortie stderr native, donc
+# pas de NativeCommandError sous $ErrorActionPreference = 'Stop'.
+Info "Test de generation sur '$Nom' (peut prendre une minute sur CPU)..."
+try {
+    $Corps = @{ model = $Nom; prompt = "Reponds exactement: PRET"; stream = $false } | ConvertTo-Json
+    $Res = Invoke-RestMethod -Uri "http://127.0.0.1:11434/api/generate" -Method Post `
+                             -Body $Corps -ContentType "application/json" -TimeoutSec 300
+    if ($Res.response) { Ok "Le modele repond : $($Res.response.Trim())" }
+    else               { Avert "Reponse vide. Essaie a la main : ollama run $Nom" }
+} catch {
+    Avert "Test impossible ($($_.Exception.Message)). Essaie a la main : ollama run $Nom"
+}
 
 Write-Host ""
 Write-Host "=== C'est pret ===" -ForegroundColor Green
