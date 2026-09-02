@@ -49,12 +49,43 @@ Pour en faire aussi l'icône du Bureau :
 
 Ton image reste sur ta machine : elle est exclue du dépôt par `.gitignore`.
 
+## Lui envoyer des images
+
+Trois façons, toutes équivalentes :
+
+- **Glisse-dépose** un fichier n'importe où sur la fenêtre
+- **Colle** avec `Ctrl+V` (capture d'écran comprise)
+- **Clique sur le trombone** dans la zone de saisie
+
+L'image part **directement dans ton Ollama local**, en base64 dans le champ
+`images` de l'API. Elle ne transite par aucun service, et surtout pas par moi.
+
+Elle est réduite à 1024 px et convertie en JPEG avant l'envoi : les modèles de
+vision n'exploitent pas plus, et une image brute saturerait le stockage du
+navigateur. Six images maximum par message.
+
+**Il faut un modèle qui voit.** `dolphin3` et la plupart des modèles sont
+aveugles. Quand le modèle sélectionné sait lire les images, un badge **vision**
+apparaît dans l'en-tête ; sinon LAIN te prévient avant d'envoyer. Pour en
+installer un :
+
+```powershell
+ollama pull llava:7b            # 4,7 Go - le classique
+ollama pull qwen2.5vl:7b        # 6 Go   - meilleur sur le texte dans l'image
+ollama pull moondream           # 1,7 Go - léger
+```
+
+Puis choisis-le dans le sélecteur **Modèle**.
+
 ## La voix
 
-Bouton **Voix** en bas du panneau. La lecture utilise la synthèse vocale de
-Windows : hors-ligne, rien n'est envoyé nulle part. Le sélecteur au-dessus liste
-les voix françaises installées, les féminines en premier (Denise, Vivienne,
-Éloise, Julie, Hortense…). `Échap` coupe la lecture en cours.
+**Active par défaut.** La lecture utilise la synthèse vocale de Windows :
+hors-ligne, rien n'est envoyé nulle part. Le sélecteur liste les voix françaises
+installées, les féminines en premier (Denise, Vivienne, Éloise, Julie,
+Hortense…). `Échap` coupe la lecture, le bouton **Voix** la désactive.
+
+Réglages retenus : débit `0.98` (légèrement posé) et hauteur `1.28` (voix jeune
+plutôt que neutre). Modifiables dans `index.html`, fonction `dire()`.
 
 La lecture démarre dès la première phrase terminée plutôt qu'à la fin de la
 réponse — sinon il faudrait attendre que tout soit généré.
@@ -78,6 +109,10 @@ sont ce qui s'en approche le plus sans ça.
 | Voix | Synthèse vocale française, hors-ligne, avec sélecteur de voix |
 | Portrait animé | Décalage RVB et tremblement quand elle parle, barres de signal |
 | Ambiance | Lignes de balayage CRT, vignette, balayage lent, titre à effet glitch |
+| Images | Glisse-dépose, `Ctrl+V` ou trombone → direct dans ton modèle local |
+| Mode wired | Grille réseau animée, contrastes durcis, tout en monospace |
+| Sons | Séquence d'allumage et retours discrets, synthétisés (aucun fichier) |
+| Souris | Le portrait dérive vers le curseur, un halo le suit |
 | Raccourcis | `Entrée` envoie, `Maj+Entrée` retour à la ligne, `Ctrl+K` nouvelle conversation, `Échap` coupe la voix |
 
 Tout est local. Aucune requête ne sort de ta machine.
@@ -130,11 +165,13 @@ python3 tests/mock_ollama.py static &   # sert lain/ sur 8765
 python3 tests/test_lain.py
 ```
 
-40 vérifications : connexion, liste des modèles, streaming, rendu Markdown,
+75 vérifications : connexion, liste des modèles, streaming, rendu Markdown,
 échappement du HTML renvoyé par le modèle, persistance, panneau latéral,
 responsive, détection de l'avatar et repli, bascule de l'état « elle parle »,
-réglages de voix, découpage en phrases pour la lecture, et absence d'erreur
-JavaScript.
+réglages de voix, découpage en phrases pour la lecture, suivi de la souris,
+mode wired, sons, et le trajet complet d'une image — y compris la vérification,
+côté serveur, qu'elle part bien dans le champ `images` d'Ollama et que les
+aperçus d'affichage, eux, ne partent pas.
 
 Les animations sont toutes désactivées sous `prefers-reduced-motion`, et le
 scintillement est lent et de faible amplitude — pas de flash rapide.

@@ -1,5 +1,10 @@
 """Teste l'interface LAIN dans Chromium : connexion, streaming, markdown, captures."""
-import sys, time
+import base64, json, pathlib, sys, time
+
+# PNG 8x8 rouge, minimal, pour tester le trajet d'une image
+PNG_ROUGE = base64.b64decode(
+    "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX/AAD///9BHTQRAAAA"
+    "DklEQVQI12P4//8/AwAI/AL+p5qgoAAAAABJRU5ErkJggg==")
 from playwright.sync_api import sync_playwright
 
 BASE = "http://127.0.0.1:8765/index.html"
@@ -33,7 +38,7 @@ with sync_playwright() as p:
     verifier("ecran d'accueil visible", page.locator("#welcome").is_visible())
     verifier("fil masque au depart", not page.locator("#thread").is_visible())
     verifier("connecte a Ollama", "Connect" in page.locator("#status-txt").inner_text())
-    verifier("3 modeles listes", page.locator("#model option").count() == 3)
+    verifier("4 modeles listes", page.locator("#model option").count() == 4)
     verifier("mon-ia selectionne par defaut",
              page.locator("#model").input_value() == "mon-ia:latest")
     verifier("badge affiche le modele", "mon-ia" in page.locator("#badge").inner_text())
@@ -101,7 +106,15 @@ with sync_playwright() as p:
     page.wait_for_timeout(400)
     debord = page.evaluate("() => document.documentElement.scrollWidth > window.innerWidth + 1")
     verifier("pas de debordement horizontal", not debord)
+    verifier("panneau referme sur petit ecran (sinon il masque la saisie)",
+             "hidden" in (page.locator("#sidebar").get_attribute("class") or ""))
+    verifier("zone de saisie atteignable",
+             page.locator("#input").is_visible())
     page.screenshot(path=f"{SORTIE}/lain-04-mobile.png")
+    page.set_viewport_size({"width": 1440, "height": 900})
+    page.wait_for_timeout(400)
+    verifier("panneau rouvert au retour en grand ecran",
+             "hidden" not in (page.locator("#sidebar").get_attribute("class") or ""))
 
     print("\n[9] Portrait, avatar et animation")
     verifier("3 portraits presents (panneau, accueil, message)",
@@ -141,22 +154,27 @@ with sync_playwright() as p:
 
     print("\n[11] Voix")
     verifier("selecteur de voix present", page.locator("#voice").count() == 1)
-    verifier("bouton voix coupe par defaut",
-             page.locator("#voice-toggle").get_attribute("aria-pressed") == "false")
+    # choix de conception : la voix est ACTIVE par defaut. Elle ne demarre
+    # qu'apres un envoi, donc apres un geste utilisateur : pas de blocage
+    # d'autoplay, et pas de son inattendu au chargement.
+    verifier("voix active par defaut",
+             page.locator("#voice-toggle").get_attribute("aria-pressed") == "true")
     # Chromium sans voix systeme : on verifie le comportement degrade
     nb_voix = page.evaluate("() => (window.speechSynthesis ? speechSynthesis.getVoices().length : -1)")
     print(f"  (info) voix systeme disponibles dans ce Chromium : {nb_voix}")
     page.locator("#voice-toggle").click()
     page.wait_for_timeout(150)
-    verifier("le bouton bascule a actif",
-             page.locator("#voice-toggle").get_attribute("aria-pressed") == "true")
-    verifier("le libelle suit", "active" in page.locator("#voice-label").inner_text().lower())
-    verifier("preference voix persistee",
-             page.evaluate("() => localStorage.getItem('lain.voixActive')") == "1")
-    page.locator("#voice-toggle").click()
-    page.wait_for_timeout(100)
-    verifier("le bouton se recoupe",
+    verifier("le bouton se coupe",
              page.locator("#voice-toggle").get_attribute("aria-pressed") == "false")
+    verifier("coupure persistee",
+             page.evaluate("() => localStorage.getItem('lain.voixActive')") == "0")
+    page.locator("#voice-toggle").click()
+    page.wait_for_timeout(150)
+    verifier("le bouton se rallume",
+             page.locator("#voice-toggle").get_attribute("aria-pressed") == "true")
+    verifier("le libelle suit", "on" in page.locator("#voice-label").inner_text().lower())
+    verifier("reactivation persistee",
+             page.evaluate("() => localStorage.getItem('lain.voixActive')") == "1")
 
     print("\n[12] Decoupage en phrases pour la lecture")
     # creerDiseur ne doit parler qu'une fois la phrase terminee
@@ -179,7 +197,102 @@ with sync_playwright() as p:
     verifier("le reste est vide a la fin",
              "Ca va bien ?" in dit["phrases"], str(dit["phrases"]))
 
-    print("\n[13] Erreurs JavaScript")
+    print("\n[13] Suivi de la souris")
+    avant = page.evaluate("() => getComputedStyle(document.documentElement).getPropertyValue('--mx')")
+    page.mouse.move(1300, 780)
+    page.wait_for_timeout(420)
+    apres = page.evaluate("() => getComputedStyle(document.documentElement).getPropertyValue('--mx')")
+    verifier("le decalage suit le curseur", avant.strip() != apres.strip(),
+             f"avant={avant!r} apres={apres!r}")
+    halo = page.evaluate("() => getComputedStyle(document.documentElement).getPropertyValue('--cx')")
+    verifier("le halo suit le curseur", "px" in halo, repr(halo))
+    page.mouse.move(200, 200)
+    page.wait_for_timeout(400)
+
+    print("\n[14] Mode wired")
+    verifier("wired eteint au depart",
+             not page.evaluate("() => document.body.classList.contains('wired')"))
+    page.locator("#wired-toggle").click()
+    page.wait_for_timeout(600)
+    verifier("wired s'active", page.evaluate("() => document.body.classList.contains('wired')"))
+    verifier("bouton wired enfonce",
+             page.locator("#wired-toggle").get_attribute("aria-pressed") == "true")
+    opacite = page.evaluate("() => getComputedStyle(document.querySelector('#wired')).opacity")
+    verifier("la couche reseau devient visible", float(opacite) > 0.9, opacite)
+    verifier("preference wired persistee",
+             page.evaluate("() => localStorage.getItem('lain.wired')") == "1")
+    page.screenshot(path=f"{SORTIE}/lain-06-wired.png")
+
+    print("\n[15] Sons")
+    verifier("sons actifs par defaut",
+             page.locator("#sound-toggle").get_attribute("aria-pressed") == "true")
+    ctx = page.evaluate("""() => {
+        try { return typeof (window.AudioContext || window.webkitAudioContext); }
+        catch(e){ return 'erreur'; }
+    }""")
+    verifier("AudioContext disponible", ctx == "function", ctx)
+    # le son de demarrage ne doit se jouer qu'une fois
+    joue = page.evaluate("() => { armerSon(); armerSon(); return demarrageJoue; }")
+    verifier("son de demarrage arme une seule fois", joue is True)
+    page.locator("#sound-toggle").click()
+    page.wait_for_timeout(120)
+    verifier("sons coupables",
+             page.locator("#sound-toggle").get_attribute("aria-pressed") == "false")
+    page.locator("#sound-toggle").click()
+    page.wait_for_timeout(120)
+
+    print("\n[16] Images vers le modele local")
+    verifier("bouton piece jointe present", page.locator("#attach").count() == 1)
+    # on simule un depot de fichier via l'input cache
+    page.set_input_files("#fichier", {
+        "name": "test.png", "mimeType": "image/png",
+        "buffer": PNG_ROUGE,
+    })
+    page.wait_for_timeout(700)
+    verifier("vignette ajoutee", page.locator(".vignette").count() == 1)
+    verifier("envoi active par la seule image", page.locator("#send").is_enabled())
+    verifier("image reduite en jpeg avant envoi",
+             page.evaluate("() => images[0].dataUrl.slice(0,22)").startswith("data:image/jpeg"))
+
+    # retrait
+    page.locator(".vignette button").click()
+    page.wait_for_timeout(150)
+    verifier("vignette retirable", page.locator(".vignette").count() == 0)
+    verifier("envoi redesactive sans texte ni image", page.locator("#send").is_disabled())
+
+    # renvoi puis envoi reel, pour verifier ce qui part sur le reseau
+    page.set_input_files("#fichier", {
+        "name": "test.png", "mimeType": "image/png", "buffer": PNG_ROUGE,
+    })
+    page.wait_for_timeout(700)
+    page.locator("#input").fill("Que vois-tu ?")
+    page.wait_for_timeout(120)
+    page.locator("#send").click()
+    page.wait_for_function("document.querySelectorAll('.caret').length === 0", timeout=15000)
+    page.wait_for_timeout(300)
+    verifier("apercu affiche dans le fil", page.locator(".jointes img").count() >= 1)
+    verifier("vignettes videes apres envoi", page.locator(".vignette").count() == 0)
+    page.screenshot(path=f"{SORTIE}/lain-07-image.png")
+
+    envoye = json.loads(pathlib.Path("/tmp/lain-dernier-envoi.json").read_text())
+    dernier_user = [m for m in envoye["messages"] if m["role"] == "user"][-1]
+    verifier("l'image part bien dans le champ 'images' d'Ollama",
+             dernier_user["nb_images"] == 1, str(dernier_user))
+    verifier("les apercus d'affichage ne partent pas au modele",
+             "apercus" not in dernier_user["cles"], str(dernier_user["cles"]))
+
+    print("\n[17] Capacite vision du modele")
+    page.select_option("#model", "llava:7b")
+    page.wait_for_timeout(500)
+    verifier("badge vision affiche pour llava", page.locator("#badge-vision").is_visible())
+    page.select_option("#model", "mon-ia:latest")
+    page.wait_for_timeout(500)
+    verifier("badge vision masque pour un modele texte",
+             not page.locator("#badge-vision").is_visible())
+    verifier("capacite memorisee",
+             page.evaluate("() => modeleVoitImages") is False)
+
+    print("\n[18] Erreurs JavaScript")
     externes = [u for u in requetes_ko if "fonts.g" in u]
     internes = [u for u in requetes_ko if "fonts.g" not in u]
     pageerrors = [e for e in erreurs_js if e.startswith("pageerror")]

@@ -8,6 +8,8 @@ arrivera pas non plus chez l'utilisateur.
 import json, time, http.server, socketserver, sys
 from urllib.parse import urlparse
 
+DERNIER_ENVOI = "/tmp/lain-dernier-envoi.json"
+
 ORIGINES_OK = ("http://127.0.0.1", "http://localhost", "https://127.0.0.1", "https://localhost")
 
 REPONSE = """Une **closure** est une fonction qui garde l'acces aux variables de sa portee de definition.
@@ -74,6 +76,7 @@ class H(http.server.BaseHTTPRequestHandler):
                 {"name": "mon-ia:latest"},
                 {"name": "dolphin3:8b"},
                 {"name": "qwen2.5:3b"},
+                {"name": "llava:7b"},
             ]}).encode()
         else:
             self.send_response(404)
@@ -88,12 +91,44 @@ class H(http.server.BaseHTTPRequestHandler):
         self.wfile.write(corps)
 
     def do_POST(self):
+        if self.path == "/api/show":
+            brut = self.rfile.read(int(self.headers.get("Content-Length", 0)))
+            nom = json.loads(brut or b"{}").get("model", "")
+            # llava/vision -> capacite vision, comme le vrai Ollama
+            caps = ["completion"] + (["vision"] if "llava" in nom or "vl" in nom else [])
+            corps = json.dumps({"capabilities": caps,
+                                "details": {"families": ["llama"]}}).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self._cors()
+            self.send_header("Content-Length", str(len(corps)))
+            self.end_headers()
+            self.wfile.write(corps)
+            return
+
         if self.path != "/api/chat":
             self.send_response(404)
             self.send_header("Content-Length", "0")
             self.end_headers()
             return
-        self.rfile.read(int(self.headers.get("Content-Length", 0)))
+        brut = self.rfile.read(int(self.headers.get("Content-Length", 0)))
+        # On note ce que la page a reellement envoye, pour que le test puisse
+        # verifier que les images partent bien dans le champ attendu.
+        try:
+            envoi = json.loads(brut or b"{}")
+            with open(DERNIER_ENVOI, "w", encoding="utf-8") as f:
+                json.dump({
+                    "model": envoi.get("model"),
+                    "messages": [
+                        {"role": m.get("role"),
+                         "content": m.get("content"),
+                         "nb_images": len(m.get("images") or []),
+                         "cles": sorted(m.keys())}
+                        for m in envoi.get("messages", [])
+                    ],
+                }, f)
+        except Exception:
+            pass
         self.send_response(200)
         self.send_header("Content-Type", "application/x-ndjson")
         self._cors()

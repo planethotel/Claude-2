@@ -19,6 +19,8 @@
   --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --mono:'JetBrains Mono','SFMono-Regular',Consolas,'Liberation Mono',monospace;
   --avatar:none;
+  --mx:0px; --my:0px;          /* decalage suivi souris */
+  --cx:50%; --cy:50%;          /* position du halo */
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -30,7 +32,7 @@ body{
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 
-/* ---------- Couche CRT : lignes de balayage + vignette ---------- */
+/* ---------- Couches d'ambiance ---------- */
 #crt{position:fixed;inset:0;pointer-events:none;z-index:100}
 #crt::before{
   content:"";position:absolute;inset:0;
@@ -47,6 +49,49 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   animation:balayage 7.5s linear infinite;
 }
 @keyframes balayage{from{top:-80px}to{top:100%}}
+
+/* halo qui suit le curseur */
+#glow{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(320px circle at var(--cx) var(--cy),
+             rgba(63,240,216,.055),transparent 70%);
+  transition:opacity .3s;
+}
+
+/* ---------- Mode wired : plus dense, reseau visible ---------- */
+#wired{
+  position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0;
+  transition:opacity .5s;
+  background-image:
+    linear-gradient(rgba(63,240,216,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(63,240,216,.055) 1px,transparent 1px),
+    linear-gradient(rgba(63,240,216,.028) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(63,240,216,.028) 1px,transparent 1px);
+  background-size:132px 132px,132px 132px,33px 33px,33px 33px;
+  background-position:var(--mx) var(--my);
+}
+body.wired #wired{opacity:1}
+/* paquets qui circulent sur le reseau */
+#wired::before,#wired::after{
+  content:"";position:absolute;height:1px;left:0;right:0;
+  background:linear-gradient(90deg,transparent,rgba(63,240,216,.5),transparent);
+}
+#wired::before{top:26%;animation:paquet 4.5s linear infinite}
+#wired::after{top:68%;animation:paquet 6.2s linear infinite reverse}
+@keyframes paquet{
+  0%{transform:translateX(-60%) scaleX(.28);opacity:0}
+  12%{opacity:1}
+  88%{opacity:1}
+  100%{transform:translateX(60%) scaleX(.28);opacity:0}
+}
+body.wired #crt::before{
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.34) 0 1px,transparent 1px 2px);
+  opacity:.72;
+}
+body.wired{--border:#1b3540;--border-bright:#2b5464;--text-dim:#8fb3ba}
+body.wired .brand-name{text-shadow:0 0 12px rgba(63,240,216,.55)}
+body.wired #welcome h1{text-shadow:0 0 22px rgba(63,240,216,.4)}
+body.wired .conv,body.wired .chip,body.wired #head-title{font-family:var(--mono);font-size:12px}
 
 /* ---------- Barre laterale ---------- */
 #sidebar{
@@ -69,9 +114,12 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .portrait.p-md{width:30px;height:30px;border-radius:8px}
 .portrait.p-lg{width:132px;height:132px;border-radius:18px;margin:0 auto 22px}
 .portrait .img{
-  position:absolute;inset:0;background-image:var(--avatar);
+  position:absolute;inset:-6%;background-image:var(--avatar);
   background-size:cover;background-position:center 22%;
   filter:saturate(1.25) contrast(1.12) brightness(.98);
+  /* le leger surdimensionnement evite de voir les bords quand elle suit la souris */
+  transform:translate(var(--mx),var(--my));
+  transition:transform .28s cubic-bezier(.22,.61,.36,1);
 }
 /* Repli quand aucune image n'est fournie : un oeil geometrique */
 .portrait .fallback{
@@ -83,6 +131,8 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .portrait .fallback::after{
   content:"";width:48%;height:48%;border-radius:50%;
   background:radial-gradient(circle,var(--bg) 0 56%,rgba(255,255,255,.94) 56% 100%);
+  transform:translate(var(--mx),var(--my));
+  transition:transform .28s cubic-bezier(.22,.61,.36,1);
 }
 body.has-avatar .portrait .fallback{display:none}
 body:not(.has-avatar) .portrait .img{display:none}
@@ -106,9 +156,9 @@ body:not(.has-avatar) .portrait .img{display:none}
 }
 body:not(.has-avatar) .portrait.parle::before{display:none}
 @keyframes tremble{
-  0%,100%{transform:translate(0,0) scale(1)}
-  33%{transform:translate(.6px,-.4px) scale(1.008)}
-  66%{transform:translate(-.5px,.3px) scale(.996)}
+  0%,100%{transform:translate(var(--mx),var(--my)) scale(1)}
+  33%{transform:translate(calc(var(--mx) + .6px),calc(var(--my) - .4px)) scale(1.008)}
+  66%{transform:translate(calc(var(--mx) - .5px),calc(var(--my) + .3px)) scale(.996)}
 }
 @keyframes decalageRVB{
   0%,100%{transform:translateX(0);filter:none;opacity:.28}
@@ -116,6 +166,9 @@ body:not(.has-avatar) .portrait.parle::before{display:none}
   70%{transform:translateX(2px);filter:hue-rotate(38deg);opacity:.42}
 }
 .portrait.parle{box-shadow:0 0 24px -4px var(--accent-glow),0 0 0 1px rgba(63,240,216,.25)}
+/* reaction au survol du grand portrait */
+.portrait.p-lg{transition:box-shadow .3s,transform .3s}
+.portrait.p-lg:hover{box-shadow:0 0 42px -8px rgba(63,240,216,.5);transform:scale(1.025)}
 
 /* barre de "signal" sous le grand portrait */
 .signal{display:flex;gap:3px;justify-content:center;height:15px;align-items:flex-end;margin:-10px 0 18px}
@@ -158,13 +211,14 @@ select{
   font-size:12.5px;font-family:var(--mono);cursor:pointer;
 }
 select+label.tiny{margin-top:11px}
-.voix-ligne{display:flex;align-items:center;gap:9px;margin-top:11px}
-#voice-toggle{
-  display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-dim);
+.bascules{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.bascule{
+  display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);
   font-family:var(--mono);padding:5px 9px;border:1px solid var(--border-bright);
-  border-radius:99px;transition:all .15s;flex-shrink:0;
+  border-radius:99px;transition:all .15s;
 }
-#voice-toggle[aria-pressed="true"]{color:var(--accent);border-color:var(--accent-2);
+.bascule:hover{color:var(--text);border-color:var(--accent-2)}
+.bascule[aria-pressed="true"]{color:var(--accent);border-color:var(--accent-2);
   background:var(--accent-glow)}
 .status{display:flex;align-items:center;gap:7px;margin-top:11px;font-size:11px;
   color:var(--text-faint);font-family:var(--mono)}
@@ -189,6 +243,7 @@ header{
   border:1px solid rgba(63,240,216,.26);padding:3px 9px;border-radius:99px;
   font-weight:500;white-space:nowrap;font-family:var(--mono);
 }
+.badge.vision{color:#9ae6ff;border-color:rgba(154,230,255,.3);background:rgba(154,230,255,.1)}
 
 #scroll{flex:1;overflow-y:auto;scroll-behavior:smooth;position:relative;z-index:1}
 #thread{max-width:780px;margin:0 auto;padding:28px 24px 8px}
@@ -234,6 +289,15 @@ header{
 .code-wrap:hover .copy{opacity:1}
 .copy:hover{color:var(--accent);border-color:var(--accent-2)}
 
+/* images jointes dans le fil */
+.jointes{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px}
+.jointes img{
+  max-width:190px;max-height:190px;border-radius:var(--radius-sm);
+  border:1px solid var(--border-bright);display:block;
+  /* une image minuscule resterait invisible sans plancher */
+  min-width:56px;min-height:56px;object-fit:contain;background:var(--surface-2);
+}
+
 .caret{display:inline-block;width:8px;height:15px;background:var(--accent);
   vertical-align:-2px;margin-left:2px;animation:blink 1.1s steps(2) infinite;
   box-shadow:0 0 8px var(--accent)}
@@ -253,7 +317,7 @@ header{
   font-size:12.5px;color:var(--text-dim);transition:all .15s;
 }
 .chip:hover{color:var(--accent);border-color:var(--accent-2);background:var(--surface);
-  box-shadow:0 0 18px -6px var(--accent-glow)}
+  box-shadow:0 0 18px -6px var(--accent-glow);transform:translateY(-1px)}
 
 /* texte a effet glitch, uniquement sur le titre */
 .glitch{position:relative;display:inline-block}
@@ -280,16 +344,20 @@ header{
 #composer{
   max-width:780px;margin:0 auto;background:var(--surface);
   border:1px solid var(--border-bright);border-radius:var(--radius);
-  display:flex;align-items:flex-end;gap:8px;padding:9px 9px 9px 15px;
+  padding:9px 9px 9px 15px;
   transition:border-color .15s,box-shadow .15s;
 }
 #composer:focus-within{border-color:var(--accent-2);box-shadow:0 0 0 3px var(--accent-glow)}
+.ligne-saisie{display:flex;align-items:flex-end;gap:8px}
 #input{
   flex:1;background:none;border:none;resize:none;color:var(--text);
   font-family:var(--font);font-size:14.5px;line-height:1.55;
   max-height:190px;padding:6px 0;outline:none;
 }
 #input::placeholder{color:var(--text-faint)}
+#attach{width:31px;height:31px;border-radius:8px;color:var(--text-dim);
+  display:grid;place-items:center;flex-shrink:0;transition:all .15s}
+#attach:hover{background:var(--surface-2);color:var(--accent)}
 #send{
   width:33px;height:33px;border-radius:8px;background:var(--accent);color:#02181a;
   display:grid;place-items:center;flex-shrink:0;transition:opacity .15s,transform .1s;
@@ -297,14 +365,42 @@ header{
 #send:hover:not(:disabled){transform:scale(1.06)}
 #send:disabled{opacity:.28;cursor:not-allowed}
 #send.stop{background:var(--danger);color:#2a0606}
+
+/* vignettes des images en attente */
+#vignettes{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px}
+#vignettes:empty{display:none}
+.vignette{position:relative;width:58px;height:58px;border-radius:7px;overflow:hidden;
+  border:1px solid var(--border-bright)}
+.vignette img{width:100%;height:100%;object-fit:cover;display:block}
+.vignette button{
+  position:absolute;top:2px;right:2px;width:17px;height:17px;border-radius:50%;
+  background:rgba(4,7,10,.86);color:#fff;font-size:12px;line-height:1;
+  display:grid;place-items:center;
+}
+.vignette button:hover{background:var(--danger);color:#2a0606}
+
 .hint{max-width:780px;margin:8px auto 0;font-size:10.5px;color:var(--text-faint);
   text-align:center;font-family:var(--mono);letter-spacing:.04em}
+
+/* zone de depot plein ecran */
+#drop{
+  position:fixed;inset:0;z-index:120;display:none;place-items:center;
+  background:rgba(4,7,10,.86);backdrop-filter:blur(4px);
+}
+#drop.actif{display:grid}
+#drop .cadre{
+  border:2px dashed var(--accent);border-radius:18px;padding:44px 62px;
+  text-align:center;background:rgba(16,26,32,.8);
+}
+#drop .cadre b{display:block;font-family:var(--mono);font-size:16px;
+  letter-spacing:.14em;color:var(--accent);margin-bottom:7px}
+#drop .cadre span{font-size:12.5px;color:var(--text-dim)}
 
 #toast{
   position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(70px);
   background:var(--elevated);border:1px solid var(--border-bright);
   padding:9px 16px;border-radius:99px;font-size:12.5px;font-family:var(--mono);
-  transition:transform .25s;pointer-events:none;z-index:110;
+  transition:transform .25s;pointer-events:none;z-index:130;max-width:82vw;
 }
 #toast.show{transform:translateX(-50%) translateY(0)}
 
@@ -322,7 +418,9 @@ header{
 ::-webkit-scrollbar-thumb:hover{background:var(--accent-2)}
 
 @media (max-width:760px){
-  #sidebar{position:absolute;height:100%;z-index:20}
+  /* En surimpression sur petit ecran : il doit donc demarrer ferme,
+     sinon il recouvre la zone de saisie. */
+  #sidebar{position:absolute;height:100%;z-index:20;box-shadow:0 0 40px rgba(0,0,0,.6)}
   #thread,#composer,#welcome{padding-left:16px;padding-right:16px}
   .portrait.p-lg{width:104px;height:104px}
 }
@@ -331,13 +429,16 @@ header{
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   #scroll{scroll-behavior:auto}
-  #scanline{display:none}
+  #scanline,#glow{display:none}
   #crt::before{opacity:.28}
+  .portrait .img,.portrait .fallback::after{transform:none!important}
 }
 </style>
 </head>
 <body>
 
+<div id="glow" aria-hidden="true"></div>
+<div id="wired" aria-hidden="true"></div>
 <div id="crt" aria-hidden="true"></div>
 <div id="scanline" aria-hidden="true"></div>
 
@@ -363,10 +464,18 @@ header{
     <label class="tiny" for="voice">Voix</label>
     <select id="voice" aria-label="Choix de la voix"></select>
 
-    <div class="voix-ligne">
-      <button id="voice-toggle" aria-pressed="false" aria-label="Activer ou couper la voix">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
-        <span id="voice-label">Voix coupée</span>
+    <div class="bascules">
+      <button id="voice-toggle" class="bascule" aria-pressed="false" aria-label="Activer ou couper la voix">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+        <span id="voice-label">Voix</span>
+      </button>
+      <button id="wired-toggle" class="bascule" aria-pressed="false" aria-label="Basculer le mode wired">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16v16H4z"/><path d="M4 10h16M10 4v16"/></svg>
+        wired
+      </button>
+      <button id="sound-toggle" class="bascule" aria-pressed="true" aria-label="Activer ou couper les sons d'interface">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h3l3-7 4 14 3-7h5"/></svg>
+        sons
       </button>
     </div>
 
@@ -380,6 +489,7 @@ header{
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
     </button>
     <span id="head-title">Nouvelle conversation</span>
+    <span class="badge vision" id="badge-vision" hidden>vision</span>
     <span class="badge" id="badge">--</span>
   </header>
 
@@ -404,14 +514,25 @@ header{
 
   <div id="composer-wrap">
     <div id="composer">
-      <textarea id="input" rows="1" placeholder="Écris ton message…" aria-label="Message"></textarea>
-      <button id="send" aria-label="Envoyer" disabled>
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </button>
+      <div id="vignettes"></div>
+      <div class="ligne-saisie">
+        <textarea id="input" rows="1" placeholder="Écris ton message…" aria-label="Message"></textarea>
+        <button id="attach" aria-label="Joindre une image">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.4 11.05 12.25 20.2a5.5 5.5 0 0 1-7.78-7.78l9.2-9.19a3.67 3.67 0 0 1 5.18 5.18l-9.19 9.2a1.83 1.83 0 0 1-2.6-2.6l8.5-8.48"/></svg>
+        </button>
+        <button id="send" aria-label="Envoyer" disabled>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
     </div>
-    <div class="hint">Entrée pour envoyer &middot; Maj+Entrée retour à la ligne &middot; Ctrl+K nouvelle conversation</div>
+    <input type="file" id="fichier" accept="image/*" multiple hidden>
+    <div class="hint">Entrée envoie &middot; Maj+Entrée retour à la ligne &middot; Ctrl+V colle une image &middot; Ctrl+K nouvelle conversation</div>
   </div>
 </div>
+
+<div id="drop" aria-hidden="true"><div class="cadre">
+  <b>DÉPOSE L'IMAGE</b><span>elle part directement dans ton modèle local</span>
+</div></div>
 
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -422,16 +543,71 @@ const els = {
   sidebar:$('#sidebar'), convs:$('#convs'), model:$('#model'), dot:$('#dot'),
   status:$('#status-txt'), thread:$('#thread'), welcome:$('#welcome'),
   scroll:$('#scroll'), input:$('#input'), send:$('#send'), badge:$('#badge'),
-  title:$('#head-title'), toast:$('#toast'), voice:$('#voice'),
-  voiceToggle:$('#voice-toggle'), voiceLabel:$('#voice-label')
+  badgeVision:$('#badge-vision'), title:$('#head-title'), toast:$('#toast'),
+  voice:$('#voice'), voiceToggle:$('#voice-toggle'), voiceLabel:$('#voice-label'),
+  wiredToggle:$('#wired-toggle'), soundToggle:$('#sound-toggle'),
+  vignettes:$('#vignettes'), fichier:$('#fichier'), drop:$('#drop'), attach:$('#attach')
 };
 
 let convos = [], actif = null, enCours = false, ctrl = null;
+let images = [];          /* images en attente d'envoi */
+let modeleVoitImages = null;
+const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ================= Sons (synthetises, aucun fichier) ================= */
+let audioCtx = null, sonsActifs = true;
+function ctxAudio(){
+  if(!audioCtx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return null;
+    audioCtx = new AC();
+  }
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function bip(freq, duree, type, volume){
+  if(!sonsActifs) return;
+  const c = ctxAudio(); if(!c) return;
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type || 'sine';
+  o.frequency.setValueAtTime(freq, c.currentTime);
+  g.gain.setValueAtTime(0, c.currentTime);
+  g.gain.linearRampToValueAtTime(volume || .05, c.currentTime + .012);
+  g.gain.exponentialRampToValueAtTime(.0001, c.currentTime + duree);
+  o.connect(g); g.connect(c.destination);
+  o.start(); o.stop(c.currentTime + duree + .02);
+}
+/* Sequence d'allumage : montee, puis deux tonalites, comme un poste qui s'allume. */
+function sonDemarrage(){
+  if(!sonsActifs) return;
+  const c = ctxAudio(); if(!c) return;
+  const o = c.createOscillator(), g = c.createGain(), f = c.createBiquadFilter();
+  f.type = 'lowpass'; f.frequency.setValueAtTime(700, c.currentTime);
+  o.type = 'sawtooth';
+  o.frequency.setValueAtTime(58, c.currentTime);
+  o.frequency.exponentialRampToValueAtTime(320, c.currentTime + .5);
+  g.gain.setValueAtTime(.0001, c.currentTime);
+  g.gain.exponentialRampToValueAtTime(.05, c.currentTime + .16);
+  g.gain.exponentialRampToValueAtTime(.0001, c.currentTime + .62);
+  o.connect(f); f.connect(g); g.connect(c.destination);
+  o.start(); o.stop(c.currentTime + .66);
+  setTimeout(function(){ bip(880, .1, 'square', .028); }, 480);
+  setTimeout(function(){ bip(1320, .16, 'square', .022); }, 610);
+}
+/* Le navigateur refuse le son avant une interaction : on arme au premier geste. */
+let demarrageJoue = false;
+function armerSon(){
+  if(demarrageJoue) return;
+  demarrageJoue = true;
+  sonDemarrage();
+}
+['pointerdown','keydown'].forEach(function(ev){
+  document.addEventListener(ev, armerSon, {once:true});
+});
 
 /* ================= Portrait ================= */
 /* L'image n'est pas livree avec l'appli : on cherche un fichier avatar.*
-   depose par l'utilisateur a cote d'index.html. Sinon, on garde l'oeil
-   geometrique de repli. */
+   depose par l'utilisateur a cote d'index.html. Sinon, oeil geometrique. */
 function chargerAvatar(){
   const noms = ['avatar.gif','avatar.png','avatar.webp','avatar.jpg','avatar.jpeg'];
   (function essayer(i){
@@ -452,12 +628,35 @@ function parle(actifBool){
   document.body.classList.toggle('parle', actifBool);
 }
 
+/* ================= Suivi de la souris ================= */
+/* Le portrait derive legerement vers le curseur, et un halo le suit. */
+let cibleX = 0, cibleY = 0, courantX = 0, courantY = 0, animSouris = null;
+function boucleSouris(){
+  courantX += (cibleX - courantX) * .12;
+  courantY += (cibleY - courantY) * .12;
+  const r = document.documentElement.style;
+  r.setProperty('--mx', courantX.toFixed(2)+'px');
+  r.setProperty('--my', courantY.toFixed(2)+'px');
+  if(Math.abs(cibleX-courantX) > .05 || Math.abs(cibleY-courantY) > .05){
+    animSouris = requestAnimationFrame(boucleSouris);
+  } else { animSouris = null; }
+}
+if(!reduit){
+  document.addEventListener('pointermove', function(e){
+    cibleX = (e.clientX / window.innerWidth  - .5) * 7;
+    cibleY = (e.clientY / window.innerHeight - .5) * 7;
+    document.documentElement.style.setProperty('--cx', e.clientX+'px');
+    document.documentElement.style.setProperty('--cy', e.clientY+'px');
+    if(!animSouris) animSouris = requestAnimationFrame(boucleSouris);
+  });
+}
+
 /* ================= Voix ================= */
 const synth = window.speechSynthesis || null;
 let voixDispo = [], voixActive = false;
 
-/* Voix feminines francaises courantes sous Windows, de la plus naturelle
-   a la plus basique. On prend la premiere disponible. */
+/* Voix feminines francaises, de la plus naturelle a la plus basique.
+   Les "Natural" de Windows 11 sont nettement au-dessus des anciennes. */
 const PREFEREES = ['denise','vivienne','eloise','charline','julie','hortense',
                    'audrey','amelie','caroline','marie','lea','sylvie'];
 
@@ -507,7 +706,9 @@ function dire(texte){
   const u = new SpeechSynthesisUtterance(texte);
   const v = voixChoisie();
   if(v){ u.voice = v; u.lang = v.lang; } else { u.lang = 'fr-FR'; }
-  u.rate = 1.02; u.pitch = 1.14;   // un peu plus haut : voix de fille
+  /* Reglages choisis : debit legerement pose, hauteur remontee pour une voix
+     jeune et douce plutot que neutre. */
+  u.rate = 0.98; u.pitch = 1.28;
   u.onstart = function(){ parle(true); };
   u.onend = function(){ if(!synth.speaking) parle(false); };
   u.onerror = function(){ parle(false); };
@@ -532,14 +733,99 @@ function creerDiseur(){
   };
 }
 
+/* ================= Images ================= */
+/* Reduites avant envoi : les modeles de vision n'exploitent pas plus de
+   ~1120px, et une image brute ferait exploser le quota de stockage. */
+function reduireImage(fichier){
+  return new Promise(function(resoudre, rejeter){
+    const lect = new FileReader();
+    lect.onerror = function(){ rejeter(new Error('lecture impossible')); };
+    lect.onload = function(e){
+      const img = new Image();
+      img.onerror = function(){ rejeter(new Error('image illisible')); };
+      img.onload = function(){
+        const max = 1024;
+        let {width:w, height:h} = img;
+        if(w > max || h > max){
+          const k = Math.min(max/w, max/h);
+          w = Math.round(w*k); h = Math.round(h*k);
+        }
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        resoudre(cv.toDataURL('image/jpeg', 0.85));
+      };
+      img.src = e.target.result;
+    };
+    lect.readAsDataURL(fichier);
+  });
+}
+async function ajouterImages(liste){
+  const fichiers = Array.from(liste || []).filter(function(f){
+    return f && /^image\//.test(f.type);
+  });
+  if(!fichiers.length) return;
+  for(const f of fichiers){
+    if(images.length >= 6){ toast('6 images maximum'); break; }
+    try{
+      const dataUrl = await reduireImage(f);
+      images.push({id:String(Date.now())+Math.random(), dataUrl:dataUrl,
+                   b64:dataUrl.split(',')[1]});
+    }catch(e){ toast('Image ignorée : '+e.message); }
+  }
+  rendreVignettes();
+  majEnvoi();
+  bip(1180, .05, 'square', .02);
+  if(modeleVoitImages === false) toast('Ce modèle ne lit pas les images');
+}
+function rendreVignettes(){
+  els.vignettes.innerHTML = '';
+  images.forEach(function(im){
+    const d = document.createElement('div');
+    d.className = 'vignette';
+    const i = document.createElement('img');
+    i.src = im.dataUrl; i.alt = 'image jointe';
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = '×';
+    b.setAttribute('aria-label','Retirer cette image');
+    b.onclick = function(){
+      images = images.filter(function(x){ return x.id !== im.id; });
+      rendreVignettes(); majEnvoi();
+    };
+    d.appendChild(i); d.appendChild(b);
+    els.vignettes.appendChild(d);
+  });
+}
+
 /* ================= Stockage ================= */
 function charger(){
   try{ convos = JSON.parse(localStorage.getItem('lain.convos') || '[]'); }
   catch(e){ convos = []; }
 }
+/* Les images pesent lourd : si le quota deborde, on retente en n'en gardant
+   que les plus recentes, puis aucune, plutot que de tout perdre. */
 function sauver(){
-  try{ localStorage.setItem('lain.convos', JSON.stringify(convos.slice(0,60))); }
-  catch(e){ /* quota plein : on continue sans persister */ }
+  const essais = [
+    function(c){ return c; },
+    function(c){ return c.map(function(cv, i){
+        return i === 0 ? cv : Object.assign({}, cv, {messages: sansImages(cv.messages)}); }); },
+    function(c){ return c.map(function(cv){
+        return Object.assign({}, cv, {messages: sansImages(cv.messages)}); }); }
+  ];
+  for(const transformer of essais){
+    try{
+      localStorage.setItem('lain.convos',
+        JSON.stringify(transformer(convos).slice(0,60)));
+      return true;
+    }catch(e){ /* quota : on tente la variante suivante */ }
+  }
+  return false;
+}
+function sansImages(msgs){
+  return msgs.map(function(m){
+    if(!m.images) return m;
+    const c = Object.assign({}, m); delete c.images; delete c.apercus; return c;
+  });
 }
 
 /* ================= Markdown ================= */
@@ -583,14 +869,23 @@ function md(src){
 }
 
 /* ================= Affichage ================= */
-function bulle(role, texte, streaming){
+function bulle(role, texte, streaming, apercus){
   const d = document.createElement('div');
   d.className = 'msg '+(role==='user'?'user':'ai');
   const av = role==='user'
     ? '<div class="avatar">MOI</div>'
     : '<div class="portrait p-md" aria-hidden="true"><div class="fallback"></div><div class="img"></div></div>';
   d.innerHTML = av+'<div class="bubble"><div class="who">'+(role==='user'?'Toi':'LAIN')+'</div>'+
+    '<div class="jointes"></div>'+
     '<div class="content">'+(streaming?'<span class="caret"></span>':md(texte))+'</div></div>';
+  const zone = d.querySelector('.jointes');
+  if(apercus && apercus.length){
+    apercus.forEach(function(src){
+      const i = document.createElement('img');
+      i.src = src; i.alt = 'image envoyée';
+      zone.appendChild(i);
+    });
+  } else { zone.remove(); }
   els.thread.appendChild(d);
   return d.querySelector('.content');
 }
@@ -601,7 +896,7 @@ function afficher(){
   els.welcome.hidden = !vide;
   els.thread.hidden = vide;
   els.title.textContent = c ? c.titre : 'Nouvelle conversation';
-  if(c) c.messages.forEach(function(m){ bulle(m.role, m.content, false); });
+  if(c) c.messages.forEach(function(m){ bulle(m.role, m.content, false, m.apercus); });
   brancherCopie();
   bas();
 }
@@ -617,7 +912,10 @@ function listerConvos(){
         convos = convos.filter(function(x){ return x.id!==c.id; });
         if(actif===c.id) actif = convos.length ? convos[0].id : null;
         sauver(); listerConvos(); afficher();
-      } else { actif = c.id; listerConvos(); afficher(); }
+      } else {
+        actif = c.id; listerConvos(); afficher(); bip(760,.04,'sine',.018);
+        if(window.innerWidth <= 760) els.sidebar.classList.add('hidden');
+      }
     };
     els.convs.appendChild(d);
   });
@@ -626,7 +924,7 @@ function bas(){ els.scroll.scrollTop = els.scroll.scrollHeight; }
 function toast(msg){
   els.toast.textContent = msg;
   els.toast.classList.add('show');
-  setTimeout(function(){ els.toast.classList.remove('show'); }, 1900);
+  setTimeout(function(){ els.toast.classList.remove('show'); }, 2400);
 }
 
 /* ================= Ollama ================= */
@@ -650,6 +948,7 @@ async function connecter(){
     els.badge.textContent = els.model.value;
     els.dot.className = 'dot on';
     els.status.textContent = 'Connecté · local';
+    majVision();
     return true;
   }catch(e){
     els.dot.className = 'dot off';
@@ -658,6 +957,31 @@ async function connecter(){
     bandeau();
     return false;
   }
+}
+/* Tous les modeles ne lisent pas les images. On demande a Ollama ce que
+   celui-ci sait faire, pour prevenir avant l'envoi plutot qu'apres. */
+async function majVision(){
+  modeleVoitImages = null;
+  els.badgeVision.hidden = true;
+  const nom = els.model.value;
+  if(!nom) return;
+  try{
+    const r = await fetch(API+'/api/show',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:nom})
+    });
+    if(!r.ok) return;
+    const d = await r.json();
+    let vision = false;
+    if(Array.isArray(d.capabilities)){
+      vision = d.capabilities.indexOf('vision') >= 0;
+    }else{
+      const fam = (d.details && d.details.families) || [];
+      vision = fam.some(function(f){ return /clip|mllama|vision/i.test(f); });
+    }
+    modeleVoitImages = vision;
+    els.badgeVision.hidden = !vision;
+  }catch(e){ /* version d'Ollama sans /api/show : on n'affirme rien */ }
 }
 function bandeau(){
   if($('#offline-banner')) return;
@@ -672,22 +996,37 @@ function bandeau(){
 /* ================= Envoi ================= */
 async function envoyer(){
   const texte = els.input.value.trim();
-  if(!texte || enCours) return;
+  if((!texte && !images.length) || enCours) return;
   stopVoix();
 
+  const jointes = images.slice();
+  images = []; rendreVignettes();
+
+  const titre = texte || (jointes.length+' image'+(jointes.length>1?'s':''));
   if(!actif){
-    const c = {id:Date.now(), titre:texte.slice(0,42)+(texte.length>42?'...':''), messages:[]};
+    const c = {id:Date.now(), titre:titre.slice(0,42)+(titre.length>42?'...':''), messages:[]};
     convos.unshift(c); actif = c.id; listerConvos();
     els.title.textContent = c.titre;
   }
   const conv = convos.filter(function(c){ return c.id===actif; })[0];
-  conv.messages.push({role:'user', content:texte});
+
+  const msg = {role:'user', content:texte};
+  if(jointes.length){
+    msg.images  = jointes.map(function(i){ return i.b64; });      /* pour Ollama */
+    msg.apercus = jointes.map(function(i){ return i.dataUrl; });  /* pour l'affichage */
+  }
+  conv.messages.push(msg);
 
   els.input.value = ''; els.input.style.height = 'auto';
   els.welcome.hidden = true; els.thread.hidden = false;
-  bulle('user', texte, false);
+  bulle('user', texte, false, msg.apercus);
   const cible = bulle('assistant', '', true);
   bas();
+  bip(660, .05, 'sine', .022);
+
+  if(jointes.length && modeleVoitImages === false){
+    toast('« '+els.model.value+' » ne lit pas les images. Essaie : ollama pull llava:7b');
+  }
 
   enCours = true;
   els.send.classList.add('stop');
@@ -696,12 +1035,19 @@ async function envoyer(){
   ctrl = new AbortController();
   const diseur = creerDiseur();
 
+  /* On n'envoie pas les apercus a Ollama : il n'attend que le champ images. */
+  const pourOllama = conv.messages.map(function(m){
+    const c = {role:m.role, content:m.content};
+    if(m.images) c.images = m.images;
+    return c;
+  });
+
   let recu = '';
   try{
     const r = await fetch(API+'/api/chat',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:els.model.value, messages:conv.messages, stream:true}),
+      body:JSON.stringify({model:els.model.value, messages:pourOllama, stream:true}),
       signal:ctrl.signal
     });
     if(!r.ok) throw new Error('HTTP '+r.status);
@@ -731,6 +1077,7 @@ async function envoyer(){
     cible.innerHTML = md(recu);
     conv.messages.push({role:'assistant', content:recu});
     sauver();
+    bip(980, .07, 'sine', .02);
   }catch(e){
     if(e.name === 'AbortError'){
       stopVoix();
@@ -760,7 +1107,9 @@ function brancherCopie(){
     };
   });
 }
-function majEnvoi(){ els.send.disabled = enCours ? false : !els.input.value.trim(); }
+function majEnvoi(){
+  els.send.disabled = enCours ? false : !(els.input.value.trim() || images.length);
+}
 
 /* ================= Evenements ================= */
 els.input.addEventListener('input', function(){
@@ -772,20 +1121,83 @@ els.input.addEventListener('keydown', function(e){
   if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); envoyer(); }
 });
 els.send.onclick = function(){ if(enCours){ if(ctrl) ctrl.abort(); } else { envoyer(); } };
-$('#btn-new').onclick = function(){ stopVoix(); actif = null; listerConvos(); afficher(); els.input.focus(); };
+els.attach.onclick = function(){ els.fichier.click(); };
+els.fichier.onchange = function(){ ajouterImages(els.fichier.files); els.fichier.value = ''; };
+
+/* coller une image depuis le presse-papiers */
+document.addEventListener('paste', function(e){
+  const items = (e.clipboardData && e.clipboardData.items) || [];
+  const fichiers = [];
+  for(const it of items){
+    if(it.kind === 'file'){ const f = it.getAsFile(); if(f) fichiers.push(f); }
+  }
+  if(fichiers.length){ e.preventDefault(); ajouterImages(fichiers); }
+});
+
+/* glisser-deposer sur toute la fenetre */
+let compteurDrag = 0;
+window.addEventListener('dragenter', function(e){
+  if(!e.dataTransfer || Array.from(e.dataTransfer.types).indexOf('Files') < 0) return;
+  e.preventDefault(); compteurDrag++; els.drop.classList.add('actif');
+});
+window.addEventListener('dragover', function(e){
+  if(e.dataTransfer && Array.from(e.dataTransfer.types).indexOf('Files') >= 0) e.preventDefault();
+});
+window.addEventListener('dragleave', function(){
+  compteurDrag = Math.max(0, compteurDrag-1);
+  if(!compteurDrag) els.drop.classList.remove('actif');
+});
+window.addEventListener('drop', function(e){
+  if(!e.dataTransfer) return;
+  e.preventDefault(); compteurDrag = 0; els.drop.classList.remove('actif');
+  ajouterImages(e.dataTransfer.files);
+});
+
+$('#btn-new').onclick = function(){
+  stopVoix(); actif = null; images = []; rendreVignettes();
+  listerConvos(); afficher(); majEnvoi(); els.input.focus();
+};
 $('#btn-toggle').onclick = function(){ els.sidebar.classList.toggle('hidden'); };
+
+/* Le panneau est en surimpression sous 760px : on le ferme d'office a cette
+   taille, et on le rouvre en repassant au large, sans ecraser un choix
+   explicite fait dans la meme tranche de largeur. */
+let etroitAvant = null;
+function ajusterPanneau(){
+  const etroit = window.innerWidth <= 760;
+  if(etroit === etroitAvant) return;
+  etroitAvant = etroit;
+  els.sidebar.classList.toggle('hidden', etroit);
+}
+window.addEventListener('resize', ajusterPanneau);
+ajusterPanneau();
 els.model.onchange = function(){
   localStorage.setItem('lain.model', els.model.value);
   els.badge.textContent = els.model.value;
+  majVision();
 };
 els.voice.onchange = function(){ localStorage.setItem('lain.voix', els.voice.value); };
 els.voiceToggle.onclick = function(){
   voixActive = !voixActive;
   els.voiceToggle.setAttribute('aria-pressed', String(voixActive));
-  els.voiceLabel.textContent = voixActive ? 'Voix active' : 'Voix coupée';
+  els.voiceLabel.textContent = voixActive ? 'Voix ON' : 'Voix';
   localStorage.setItem('lain.voixActive', voixActive ? '1' : '0');
   if(!voixActive) stopVoix();
-  else if(!voixDispo.length) toast('Aucune voix francaise installee');
+  else if(!voixDispo.length) toast('Aucune voix française installée sur Windows');
+  bip(voixActive ? 940 : 480, .06, 'square', .022);
+};
+els.wiredToggle.onclick = function(){
+  const on = !document.body.classList.contains('wired');
+  document.body.classList.toggle('wired', on);
+  els.wiredToggle.setAttribute('aria-pressed', String(on));
+  localStorage.setItem('lain.wired', on ? '1' : '0');
+  bip(on ? 1240 : 620, .09, 'square', .024);
+};
+els.soundToggle.onclick = function(){
+  sonsActifs = !sonsActifs;
+  els.soundToggle.setAttribute('aria-pressed', String(sonsActifs));
+  localStorage.setItem('lain.sons', sonsActifs ? '1' : '0');
+  if(sonsActifs) bip(880, .07, 'sine', .025);
 };
 document.querySelectorAll('.chip').forEach(function(c){
   c.onclick = function(){
@@ -796,23 +1208,34 @@ document.querySelectorAll('.chip').forEach(function(c){
 });
 document.addEventListener('keydown', function(e){
   if((e.ctrlKey||e.metaKey) && e.key==='k'){ e.preventDefault(); $('#btn-new').click(); }
-  if(e.key==='Escape' && synth && synth.speaking) stopVoix();
+  if(e.key==='Escape'){
+    if(synth && synth.speaking) stopVoix();
+    els.drop.classList.remove('actif'); compteurDrag = 0;
+  }
 });
 
 /* ================= Demarrage ================= */
 chargerAvatar();
+if(localStorage.getItem('lain.wired') === '1'){
+  document.body.classList.add('wired');
+  els.wiredToggle.setAttribute('aria-pressed','true');
+}
+if(localStorage.getItem('lain.sons') === '0'){
+  sonsActifs = false;
+  els.soundToggle.setAttribute('aria-pressed','false');
+}
 if(synth){
   chargerVoix();
   synth.onvoiceschanged = chargerVoix;   // Chrome les charge en differe
-  if(localStorage.getItem('lain.voixActive') === '1'){
-    voixActive = true;
-    els.voiceToggle.setAttribute('aria-pressed','true');
-    els.voiceLabel.textContent = 'Voix active';
-  }
+  /* La voix est active par defaut : elle ne demarre qu'apres un envoi,
+     donc apres un geste de l'utilisateur -- le navigateur l'autorise. */
+  voixActive = localStorage.getItem('lain.voixActive') !== '0';
+  els.voiceToggle.setAttribute('aria-pressed', String(voixActive));
+  els.voiceLabel.textContent = voixActive ? 'Voix ON' : 'Voix';
 }else{
   els.voice.disabled = true;
   els.voiceToggle.disabled = true;
-  els.voiceLabel.textContent = 'Voix indisponible';
+  els.voiceLabel.textContent = 'Voix indispo';
 }
 charger();
 actif = convos.length ? convos[0].id : null;
