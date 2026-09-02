@@ -54,3 +54,21 @@ cd .claude/skills/ui-ux-pro-max && python3 -m unittest discover -s scripts/tests
 Vendored from [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
 v2.13.0 (MIT). See `.claude/skills/ui-ux-pro-max/UPSTREAM.md` for the exact
 commit and the local modifications.
+
+## LAIN — interface de bureau pour l'IA locale
+
+Une icône sur le Bureau qui ouvre une vraie interface de chat pour ton modèle
+Ollama : historique des conversations, streaming, Markdown, blocs de code,
+sélecteur de modèle. Tout en local.
+
+```powershell
+cd lain
+.\Installer-LAIN.ps1
+```
+
+Voir [`lain/README.md`](lain/README.md).
+
+## Ollama — IA locale
+
+Kit d'installation d'un modèle hébergé sur ta machine, avec personnalisation
+(Modelfile) et fine-tuning LoRA. Voir [`ollama/README.md`](ollama/README.md).
