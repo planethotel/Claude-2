@@ -3,10 +3,43 @@
 Kit d'installation d'une IA **hébergée sur ta machine** : aucun compte, aucune
 clé API, aucune donnée qui sort. Tu la choisis, tu la modèles, tu l'entraînes.
 
-## Installation
+## Le plus rapide (sans ce repo)
+
+Si tu veux juste une IA locale tout de suite :
+
+```powershell
+winget install Ollama.Ollama     # Windows
+```
+```bash
+curl -fsSL https://ollama.com/install.sh | sh    # Linux
+brew install ollama                             # macOS
+```
+
+Puis `ollama run dolphin3:8b`. C'est tout — tu as une IA locale.
+
+Le reste de ce dossier sert à la **personnaliser** et à l'**entraîner**.
+
+## Installation avec le kit
+
+> Ce dossier vit sur la branche `claude/ui-ux-pro-max-skill-rs1xb5`. Si tu clones
+> `main`, il n'y sera pas. Clone la bonne branche :
+> ```
+> git clone -b claude/ui-ux-pro-max-skill-rs1xb5 https://github.com/planethotel/Claude-2.git
+> ```
+
+**Windows (PowerShell) :**
+
+```powershell
+cd Claude-2\ollama
+.\install.ps1
+```
+
+Si Windows bloque le script : `Set-ExecutionPolicy -Scope Process Bypass` puis relance.
+
+**Linux / macOS :**
 
 ```bash
-cd ollama
+cd Claude-2/ollama
 ./install.sh
 ```
 
@@ -14,13 +47,10 @@ Le script détecte ton OS, ta RAM et ton GPU, installe Ollama, choisit un modèl
 adapté à ta machine, le télécharge, crée ton modèle personnalisé `mon-ia`, et
 vérifie qu'il répond vraiment avant de te rendre la main.
 
-Ensuite :
+Ensuite : `ollama run mon-ia`
 
-```bash
-ollama run mon-ia
-```
-
-Pour forcer un modèle précis : `./install.sh dolphin3:8b`
+Pour forcer un modèle précis : `.\install.ps1 -Modele dolphin3:8b` (Windows) ou
+`./install.sh dolphin3:8b` (Linux/macOS).
 
 ## Choix du modèle
 
@@ -94,7 +124,8 @@ print(client.chat.completions.create(
 | Réponses très lentes | Modèle trop gros pour ta RAM → prends la taille en dessous |
 | `out of memory` | Baisse `num_ctx` dans le Modelfile, ou modèle plus petit |
 | Plus d'espace disque | `ollama list` puis `ollama rm <modèle>` |
-| Windows | Installe depuis ollama.com/download, puis lance ce script dans WSL2 |
+| Windows : script bloque | `Set-ExecutionPolicy -Scope Process Bypass` puis relance `.\install.ps1` |
+| Windows : `ollama` inconnu | Ferme et rouvre PowerShell (le PATH se met a jour au redemarrage) |
 
 ---
 
