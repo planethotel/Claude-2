@@ -84,15 +84,23 @@ ollama create mon-ia -f modelfiles/mon-ia.Modelfile
 
 Effet immédiat, aucun entraînement nécessaire.
 
-**Avant de lancer `ollama create`, vérifie ta syntaxe :**
+**Avant de lancer `ollama create`, vérifie ta syntaxe** (optionnel) :
 
+```powershell
+.\verifier-modelfile.ps1                              # Windows, aucune dépendance
+```
 ```bash
-python verifier-modelfile.py modelfiles/mon-ia.Modelfile
+python3 verifier-modelfile.py modelfiles/mon-ia.Modelfile   # Linux/macOS
 ```
 
 Le piège classique : Ollama **n'accepte aucun commentaire en fin de ligne
 `PARAMETER`**. `PARAMETER temperature 0.8  # créativité` échoue avec
 `invalid float value` — le commentaire doit être sur sa propre ligne.
+
+> **Python n'est pas nécessaire** pour installer ni utiliser ton IA. Il ne sert
+> que pour le fine-tuning (voir ci-dessous) et pour la version `.py` du
+> validateur — sur Windows, `verifier-modelfile.ps1` fait la même chose sans rien
+> installer.
 
 ## L'entraîner
 
