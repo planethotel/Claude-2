@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Generated design systems (regenerate with the ui-ux-pro-max skill)
+# design-system/
+
+# Editor / OS
+.DS_Store
+
+# Logs
+*.log

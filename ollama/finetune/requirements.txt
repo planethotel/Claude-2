@@ -1,0 +1,9 @@
+# GPU NVIDIA uniquement. Installe PyTorch CUDA en premier :
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+unsloth
+trl
+peft
+transformers
+datasets
+accelerate
+bitsandbytes
