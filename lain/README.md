@@ -23,6 +23,49 @@ et l'interface s'ouvre dans ton navigateur.
 Pour tout retirer : `.\Installer-LAIN.ps1 -Desinstaller` (tes conversations et le
 dossier ne sont pas touchés).
 
+## Mettre ton image
+
+L'appli cherche un fichier `avatar.*` à côté de `index.html`. Dépose le tien :
+
+```powershell
+# depuis le dossier lain\
+copy C:\chemin\vers\ton-image.png avatar.png
+```
+
+Noms acceptés, dans cet ordre : `avatar.gif`, `avatar.png`, `avatar.webp`,
+`avatar.jpg`, `avatar.jpeg`. **Un GIF s'anime tout seul.** Sans fichier, l'appli
+garde son œil géométrique de repli.
+
+L'image apparaît dans le panneau, sur l'écran d'accueil, et à côté de chaque
+réponse — avec un traitement écran cathodique : teinte cyan, lignes de balayage,
+et quand elle parle, décalage RVB et léger tremblement.
+
+Pour en faire aussi l'icône du Bureau :
+
+```powershell
+.\Convertir-Icone.ps1      # avatar.* -> lain.ico
+.\Installer-LAIN.ps1       # applique la nouvelle icône
+```
+
+Ton image reste sur ta machine : elle est exclue du dépôt par `.gitignore`.
+
+## La voix
+
+Bouton **Voix** en bas du panneau. La lecture utilise la synthèse vocale de
+Windows : hors-ligne, rien n'est envoyé nulle part. Le sélecteur au-dessus liste
+les voix françaises installées, les féminines en premier (Denise, Vivienne,
+Éloise, Julie, Hortense…). `Échap` coupe la lecture en cours.
+
+La lecture démarre dès la première phrase terminée plutôt qu'à la fin de la
+réponse — sinon il faudrait attendre que tout soit généré.
+
+**Si la liste est vide :** Windows → Paramètres → Heure et langue → Voix →
+Ajouter des voix → Français. Les voix « Natural » sont nettement meilleures.
+
+Je ne peux pas reproduire la voix exacte de la comédienne du doublage : ça
+demanderait un modèle de clonage vocal entraîné sur sa voix. Les voix système
+sont ce qui s'en approche le plus sans ça.
+
 ## Ce que ça fait
 
 | | |
@@ -32,7 +75,10 @@ dossier ne sont pas touchés).
 | Markdown | Gras, titres, listes, liens, code en ligne et blocs de code |
 | Blocs de code | Bouton « Copier » au survol |
 | Modèles | Sélecteur en bas du panneau : bascule entre tous tes modèles Ollama |
-| Raccourcis | `Entrée` envoie, `Maj+Entrée` retour à la ligne, `Ctrl+K` nouvelle conversation |
+| Voix | Synthèse vocale française, hors-ligne, avec sélecteur de voix |
+| Portrait animé | Décalage RVB et tremblement quand elle parle, barres de signal |
+| Ambiance | Lignes de balayage CRT, vignette, balayage lent, titre à effet glitch |
+| Raccourcis | `Entrée` envoie, `Maj+Entrée` retour à la ligne, `Ctrl+K` nouvelle conversation, `Échap` coupe la voix |
 
 Tout est local. Aucune requête ne sort de ta machine.
 
@@ -84,6 +130,11 @@ python3 tests/mock_ollama.py static &   # sert lain/ sur 8765
 python3 tests/test_lain.py
 ```
 
-25 vérifications : connexion, liste des modèles, streaming, rendu Markdown,
+40 vérifications : connexion, liste des modèles, streaming, rendu Markdown,
 échappement du HTML renvoyé par le modèle, persistance, panneau latéral,
-responsive, et absence d'erreur JavaScript.
+responsive, détection de l'avatar et repli, bascule de l'état « elle parle »,
+réglages de voix, découpage en phrases pour la lecture, et absence d'erreur
+JavaScript.
+
+Les animations sont toutes désactivées sous `prefers-reduced-motion`, et le
+scintillement est lent et de faible amplitude — pas de flash rapide.

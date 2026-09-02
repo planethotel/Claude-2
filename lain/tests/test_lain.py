@@ -57,6 +57,7 @@ with sync_playwright() as p:
 
     print("\n[4] Rendu de la reponse")
     verifier("2 messages affiches", page.locator(".msg").count() == 2)
+    verifier("portrait sur le message IA", page.locator(".msg.ai .portrait").count() == 1)
     verifier("bloc de code rendu", page.locator(".content pre code").count() == 1)
     verifier("bouton copier present", page.locator(".copy").count() == 1)
     verifier("gras rendu", page.locator(".content strong").count() >= 1)
@@ -102,7 +103,83 @@ with sync_playwright() as p:
     verifier("pas de debordement horizontal", not debord)
     page.screenshot(path=f"{SORTIE}/lain-04-mobile.png")
 
-    print("\n[9] Erreurs JavaScript")
+    print("\n[9] Portrait, avatar et animation")
+    verifier("3 portraits presents (panneau, accueil, message)",
+             page.locator(".portrait").count() == 3)
+    verifier("repli geometrique quand aucun avatar",
+             not page.evaluate("() => document.body.classList.contains('has-avatar')"))
+    verifier("le repli est visible",
+             page.locator("#portrait-sm .fallback").is_visible())
+    # l'anneau doit etre un degrade : une box-shadow en % serait invisible
+    anneau = page.evaluate("""() => getComputedStyle(
+        document.querySelector('#portrait-lg .fallback'), '::after').backgroundImage""")
+    verifier("anneau de l'oeil dessine (degrade, pas box-shadow)",
+             "gradient" in anneau, anneau[:60])
+    # l'etat "elle parle" est pilote par la fonction parle()
+    page.evaluate("() => parle(true)")
+    verifier("classe 'parle' posee sur les portraits",
+             page.locator(".portrait.parle").count() == 3)
+    verifier("classe 'parle' posee sur le body",
+             page.evaluate("() => document.body.classList.contains('parle')"))
+    page.screenshot(path=f"{SORTIE}/lain-05-parle.png")
+    page.evaluate("() => parle(false)")
+    verifier("etat 'parle' retirable", page.locator(".portrait.parle").count() == 0)
+
+    print("\n[10] Avatar fourni par l'utilisateur")
+    # 1x1 px transparent : suffit a prouver que la detection fonctionne
+    page.evaluate("""() => {
+        const px = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        document.documentElement.style.setProperty('--avatar', 'url("'+px+'")');
+        document.body.classList.add('has-avatar');
+    }""")
+    page.wait_for_timeout(120)
+    verifier("le repli disparait quand un avatar est present",
+             not page.locator("#portrait-sm .fallback").is_visible())
+    verifier("la couche image devient visible",
+             page.locator("#portrait-sm .img").is_visible())
+    page.evaluate("() => document.body.classList.remove('has-avatar')")
+
+    print("\n[11] Voix")
+    verifier("selecteur de voix present", page.locator("#voice").count() == 1)
+    verifier("bouton voix coupe par defaut",
+             page.locator("#voice-toggle").get_attribute("aria-pressed") == "false")
+    # Chromium sans voix systeme : on verifie le comportement degrade
+    nb_voix = page.evaluate("() => (window.speechSynthesis ? speechSynthesis.getVoices().length : -1)")
+    print(f"  (info) voix systeme disponibles dans ce Chromium : {nb_voix}")
+    page.locator("#voice-toggle").click()
+    page.wait_for_timeout(150)
+    verifier("le bouton bascule a actif",
+             page.locator("#voice-toggle").get_attribute("aria-pressed") == "true")
+    verifier("le libelle suit", "active" in page.locator("#voice-label").inner_text().lower())
+    verifier("preference voix persistee",
+             page.evaluate("() => localStorage.getItem('lain.voixActive')") == "1")
+    page.locator("#voice-toggle").click()
+    page.wait_for_timeout(100)
+    verifier("le bouton se recoupe",
+             page.locator("#voice-toggle").get_attribute("aria-pressed") == "false")
+
+    print("\n[12] Decoupage en phrases pour la lecture")
+    # creerDiseur ne doit parler qu'une fois la phrase terminee
+    dit = page.evaluate("""() => {
+        const sortie = [];
+        const vrai = window.dire;
+        window.dire = t => sortie.push(t);
+        const d = creerDiseur();
+        d.ajouter('Bonjour'); d.ajouter(' le mon');
+        const avant = sortie.length;
+        d.ajouter('de. Ca va'); d.ajouter(' bien ?');
+        d.vider();
+        window.dire = vrai;
+        return {avant, phrases: sortie.map(s => s.trim())};
+    }""")
+    verifier("rien n'est lu tant que la phrase est incomplete", dit["avant"] == 0,
+             str(dit))
+    verifier("la phrase terminee est lue en entier",
+             dit["phrases"] and dit["phrases"][0] == "Bonjour le monde.", str(dit["phrases"]))
+    verifier("le reste est vide a la fin",
+             "Ca va bien ?" in dit["phrases"], str(dit["phrases"]))
+
+    print("\n[13] Erreurs JavaScript")
     externes = [u for u in requetes_ko if "fonts.g" in u]
     internes = [u for u in requetes_ko if "fonts.g" not in u]
     pageerrors = [e for e in erreurs_js if e.startswith("pageerror")]
