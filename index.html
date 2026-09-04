@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cordonnerie Bonnet — Cordonnerie traditionnelle à Tours</title>
+<meta name="description" content="Cordonnerie Bonnet, 31 boulevard Heurteloup à Tours. Réparation et amélioration de chaussures, entretien du cuir et de la maroquinerie, produits et accessoires, chaussures haut de gamme reconditionnées.">
+<meta name="theme-color" content="#17100b">
+<meta property="og:title" content="Cordonnerie Bonnet — Tours">
+<meta property="og:description" content="Cordonnerie traditionnelle. Réparation, entretien du cuir, seconde vie des beaux souliers.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/bodoni-moda-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jost-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ======================= chargement ======================= -->
+<div class="chargement" id="chargement" aria-hidden="true">
+  <div class="chargement__marque">
+    <span class="chargement__ini">CB</span>
+    <span class="chargement__nom">Cordonnerie Bonnet</span>
+    <span class="chargement__barre"><i></i></span>
+  </div>
+</div>
+
+<!-- grain de papier + vignettage -->
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<a class="saut" href="#contenu">Aller au contenu</a>
+
+<!-- ======================= navigation ======================= -->
+<header class="entete" id="entete">
+  <a class="entete__marque" href="#haut">
+    <span class="entete__ini">CB</span>
+    <span class="entete__txt">
+      <b>Cordonnerie Bonnet</b>
+      <i>Tours · depuis 2024</i>
+    </span>
+  </a>
+
+  <nav class="entete__nav" id="menu" aria-label="Navigation principale">
+    <a href="#savoirfaire">Savoir-faire</a>
+    <a href="#prestations">Prestations</a>
+    <a href="#avantapres">Avant / Après</a>
+    <a href="#boutique">Boutique</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <a class="entete__tel" href="tel:+33247470782">
+    <span class="pastille"></span>02 47 47 07 82
+  </a>
+
+  <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu">
+    <i></i><i></i><i></i>
+  </button>
+</header>
+
+<main id="contenu">
+
+<!-- ============ scène 3D : elle couvre les deux sections ============ -->
+<div class="scene" id="scene">
+  <canvas class="scene__canvas" id="canvas3d" aria-hidden="true"></canvas>
+
+  <div class="annotations" id="annotations" aria-hidden="true">
+    <div class="anno" data-anno="semelle"><b>Semelle cuir</b><span>Pleine fleur, taillée à la forme puis cousue.</span></div>
+    <div class="anno" data-anno="talon"><b>Talon empilé</b><span>Couches de cuir montées une à une, bonbout neuf.</span></div>
+    <div class="anno" data-anno="patine"><b>Patine &amp; glaçage</b><span>Nuances à la main, puis miroir au bout.</span></div>
+    <div class="anno" data-anno="couture"><b>Coutures</b><span>Point repris là où le fil a cédé.</span></div>
+  </div>
+
+  <!-- ------------------------- accueil ------------------------- -->
+  <section class="hero" id="haut">
+    <div class="hero__inner">
+      <p class="surtitre" data-rev>Cordonnerie traditionnelle · Tours</p>
+      <h1 class="hero__titre" data-rev>
+        <span>Rien ne se <em>jette.</em></span>
+        <span>Tout se <em>répare.</em></span>
+      </h1>
+      <p class="hero__texte" data-rev>
+        Une paire de souliers bien faite dure vingt ans, à condition qu’une main
+        s’en occupe. À l’établi du 31&nbsp;boulevard Heurteloup, on ressemelle,
+        on recoud, on teint, on glace — et l’on rend au cuir ce que le temps
+        lui a pris.
+      </p>
+      <div class="hero__actions" data-rev>
+        <a class="bouton bouton--plein" href="#contact">Prendre contact</a>
+        <a class="bouton" href="#prestations">Voir les prestations</a>
+      </div>
+    </div>
+
+    <div class="hero__filet" aria-hidden="true">
+      <span>Réparation</span><i></i><span>Entretien du cuir</span><i></i>
+      <span>Maroquinerie</span><i></i><span>Seconde vie</span>
+    </div>
+
+    <div class="defiler" aria-hidden="true">
+      <span>Faites défiler</span><i></i>
+    </div>
+  </section>
+
+  <!-- ---------------------- savoir-faire ---------------------- -->
+  <section class="savoir" id="savoirfaire">
+    <div class="savoir__texte">
+      <p class="surtitre" data-rev>Le geste</p>
+      <h2 class="titre" data-rev>Un soulier, <em>quatre chantiers</em></h2>
+      <p data-rev>
+        On ne répare pas une chaussure, on la démonte. La semelle se sépare de la
+        tige, le talon se dépile couche après couche, le cuir se décrasse avant
+        d’être nourri. Chaque pièce a son traitement, son cuir, son fil.
+      </p>
+      <p data-rev>
+        C’est en remontant l’ensemble que la paire retrouve son aplomb — et,
+        souvent, une tenue qu’elle n’avait plus depuis longtemps.
+      </p>
+      <p class="savoir__note" data-rev>Le soulier se démonte au fil du défilement.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ------------------------- manifeste ------------------------- -->
+<section class="manifeste" id="manifeste">
+  <div class="cadre">
+    <div class="manifeste__grille">
+      <div class="manifeste__gauche">
+        <p class="surtitre" data-rev>L’atelier</p>
+        <h2 class="titre" data-rev>Le métier tient <em>dans les mains</em></h2>
+      </div>
+      <div class="manifeste__droite">
+        <p class="chapo" data-rev>
+          La Cordonnerie Bonnet est un atelier de quartier, ouvert du mardi au samedi
+          à Tours. On y répare des chaussures de ville et de travail, des bottes, des
+          sacs, des ceintures et des blousons. On y vend aussi les produits que l’on
+          utilise soi-même, et une sélection de beaux souliers remis en état.
+        </p>
+        <p data-rev>
+          Pas de délai fantaisiste ni de devis surprise : on regarde la paire avec
+          vous, on dit ce qui se répare, ce qui ne se répare pas, et ce que ça coûte.
+        </p>
+      </div>
+    </div>
+
+    <ol class="piliers" id="piliers"></ol>
+  </div>
+</section>
+
+<!-- ------------------------ prestations ------------------------ -->
+<section class="prestations" id="prestations">
+  <div class="cadre">
+    <header class="section-tete">
+      <p class="surtitre" data-rev>Au comptoir</p>
+      <h2 class="titre" data-rev>Prestations</h2>
+      <p class="section-tete__chapo" data-rev>
+        Chaque réparation est chiffrée sur pièce : l’état du cuir, le montage et
+        la matière d’origine décident du travail. Passez à l’atelier avec la paire,
+        le devis est immédiat et gratuit.
+      </p>
+    </header>
+
+    <div class="filtres" id="filtres" role="tablist" aria-label="Filtrer les prestations"></div>
+    <ul class="liste-prestations" id="liste-prestations"></ul>
+  </div>
+</section>
+
+<!-- ------------------------ avant / après ------------------------ -->
+<section class="avant-apres" id="avantapres">
+  <div class="cadre">
+    <header class="section-tete">
+      <p class="surtitre" data-rev>La preuve</p>
+      <h2 class="titre" data-rev>Avant / <em>Après</em></h2>
+      <p class="section-tete__chapo" data-rev>
+        Tirez le curseur : à gauche la paire telle qu’elle arrive, à droite telle
+        qu’elle repart. Même soulier, même lumière — seul le travail change.
+      </p>
+    </header>
+
+    <div class="compare" id="compare">
+      <div class="compare__zone" id="compare-zone">
+        <canvas id="canvas-compare"></canvas>
+        <span class="compare__etiq compare__etiq--g">Avant</span>
+        <span class="compare__etiq compare__etiq--d">Après</span>
+        <div class="compare__poignee" id="compare-poignee" tabindex="0" role="slider"
+             aria-label="Comparer avant et après" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+          <i></i>
+        </div>
+      </div>
+      <p class="compare__legende">
+        Semelle percée, talon affaissé, cuir desséché et griffé — puis semelle cuir
+        neuve, talon reconstruit, teinte reprise et glaçage.
+      </p>
+    </div>
+
+    <ul class="galerie" id="galerie"></ul>
+  </div>
+</section>
+
+<!-- --------------------------- boutique --------------------------- -->
+<section class="boutique" id="boutique">
+  <div class="cadre">
+    <header class="section-tete">
+      <p class="surtitre" data-rev>En vitrine</p>
+      <h2 class="titre" data-rev>La boutique</h2>
+    </header>
+
+    <div class="onglets" id="onglets" role="tablist" aria-label="Rayons de la boutique">
+      <button role="tab" data-rayon="seconde-vie" aria-selected="true">Seconde vie</button>
+      <button role="tab" data-rayon="accessoires" aria-selected="false">Accessoires &amp; entretien</button>
+    </div>
+
+    <p class="boutique__chapo" id="boutique-chapo"></p>
+    <ul class="rayon" id="rayon"></ul>
+
+    <p class="boutique__pied">
+      Les articles sont uniques et changent chaque semaine : passez en boutique
+      ou appelez l’atelier pour connaître les pointures disponibles.
+    </p>
+  </div>
+</section>
+
+<!-- ---------------------------- citation --------------------------- -->
+<section class="citation">
+  <div class="cadre">
+    <blockquote data-rev>
+      <p>« Une chaussure qu’on répare, c’est une chaussure qu’on garde. »</p>
+      <cite>Rémi Bonnet, cordonnier</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ---------------------------- contact ---------------------------- -->
+<section class="contact" id="contact">
+  <div class="cadre">
+    <header class="section-tete">
+      <p class="surtitre" data-rev>Venir à l’atelier</p>
+      <h2 class="titre" data-rev>Contact &amp; horaires</h2>
+    </header>
+
+    <div class="contact__grille">
+      <div class="carte carte--coord" data-rev>
+        <h3>L’atelier</h3>
+        <address>
+          <strong>Cordonnerie Bonnet</strong><br>
+          31 boulevard Heurteloup<br>
+          37000 Tours<br>
+          <span class="mineur">Quartier La Fuye · Velpeau</span>
+        </address>
+        <a class="lien-fort" href="tel:+33247470782">02 47 47 07 82</a>
+        <a class="bouton bouton--plein" id="lien-maps" href="#" target="_blank" rel="noopener">
+          Ouvrir dans le plan
+        </a>
+      </div>
+
+      <div class="carte carte--horaires" data-rev>
+        <h3>Horaires</h3>
+        <ul id="horaires"></ul>
+        <p class="mineur">Fermeture annuelle en août — les dates sont affichées en vitrine.</p>
+      </div>
+
+      <a class="carte carte--plan" id="carte-plan" data-rev href="#" target="_blank" rel="noopener"
+         aria-label="Ouvrir l’adresse de l’atelier dans Google Maps">
+        <svg viewBox="0 0 420 320" class="plan" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+          <rect width="420" height="320" fill="#181009"/>
+          <g stroke="#3a2a1c" stroke-width="14" fill="none">
+            <path d="M-10 210 H430"/><path d="M120 -10 V330"/><path d="M300 -10 V330"/>
+            <path d="M-10 90 H430"/>
+          </g>
+          <g stroke="#241810" stroke-width="2" fill="none">
+            <path d="M-10 150 H430"/><path d="M60 -10 V330"/><path d="M210 -10 V330"/><path d="M370 -10 V330"/>
+            <path d="M-10 270 H430"/>
+          </g>
+          <rect x="150" y="120" width="120" height="60" fill="#20160e" stroke="#4a3524"/>
+          <text x="210" y="112" fill="#8a6a48" font-size="11" text-anchor="middle"
+                font-family="Jost, sans-serif" letter-spacing="2">BD HEURTELOUP</text>
+          <g class="plan__pin">
+            <circle cx="210" cy="210" r="26" fill="none" stroke="#c08a3e" stroke-width="1" opacity=".5"/>
+            <circle cx="210" cy="210" r="14" fill="none" stroke="#c08a3e" stroke-width="1.5"/>
+            <circle cx="210" cy="210" r="5" fill="#d9a45a"/>
+          </g>
+          <text x="210" y="256" fill="#c8a06a" font-size="12" text-anchor="middle"
+                font-family="Jost, sans-serif" letter-spacing="3">N° 31</text>
+        </svg>
+        <span class="carte--plan__legende">31 bd Heurteloup — voir l’itinéraire</span>
+      </a>
+
+      <form class="carte carte--form" id="form" data-rev novalidate>
+        <h3>Écrire à l’atelier</h3>
+        <p class="mineur">
+          Décrivez la paire ou l’article à réparer, on vous répond avec une estimation.
+        </p>
+        <label>Nom
+          <input type="text" name="nom" autocomplete="name" required>
+        </label>
+        <label>Téléphone ou e-mail
+          <input type="text" name="contact" autocomplete="email" required>
+        </label>
+        <label>Ce qu’il y a à faire
+          <textarea name="message" rows="4" required
+            placeholder="Ex. : richelieu cuir, semelle percée à l’avant, talon usé d’un côté."></textarea>
+        </label>
+        <button class="bouton bouton--plein" type="submit">Envoyer la demande</button>
+        <p class="form__retour" id="form-retour" role="status"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ----------------------------- pied ----------------------------- -->
+<footer class="pied">
+  <div class="cadre pied__grille">
+    <div>
+      <span class="entete__ini">CB</span>
+      <p class="pied__nom">Cordonnerie Bonnet</p>
+      <p class="mineur">31 boulevard Heurteloup — 37000 Tours</p>
+    </div>
+    <nav aria-label="Pied de page">
+      <a href="#savoirfaire">Savoir-faire</a>
+      <a href="#prestations">Prestations</a>
+      <a href="#avantapres">Avant / Après</a>
+      <a href="#boutique">Boutique</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <p class="mineur pied__legal">
+      © <span id="annee"></span> Cordonnerie Bonnet — Artisan cordonnier à Tours.<br>
+      Réparation de chaussures, entretien du cuir et de la maroquinerie.
+    </p>
+  </div>
+</footer>
+
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.min.js" } }
+</script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
