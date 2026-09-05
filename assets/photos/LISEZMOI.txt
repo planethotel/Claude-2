@@ -1,0 +1,15 @@
+Déposez vos photos dans ce dossier.
+
+  devanture.jpg              la vitrine, vue de la rue        (paysage, ≥ 2000 px de large)
+  atelier-1.jpg              l'intérieur, le mur vert canard  (paysage)
+  atelier-2.jpg              le comptoir et les rayonnages    (paysage)
+  artisan.jpg                vous à l'établi                  (portrait)
+
+  galerie/                   toutes vos photos de paires, sans limite de nombre
+  avant-apres/               par paire : 01-avant.jpg et 01-apres.jpg, 02-avant.jpg…
+  boutique/                  les produits, s'il y en a
+
+Pour l'avant / après : même cadrage, même lumière, même fond sur les deux
+prises de vue. C'est ce qui rend la comparaison lisible.
+
+Formats acceptés : .jpg, .jpeg, .png, .webp
