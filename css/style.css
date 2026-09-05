@@ -297,15 +297,21 @@ a{color:inherit}
 
 /* ========================== galerie ========================== */
 .galerie{list-style:none;margin:0;padding:0;display:grid;gap:clamp(.6rem,1.4vw,1.1rem);
-  grid-template-columns:repeat(2,1fr)}
+  grid-template-columns:repeat(2,1fr);
+  /* Les tuiles tiennent leur hauteur de la grille, jamais des proportions de
+     la photo : le mur reste régulier quelles que soient les prises de vue,
+     portrait et paysage mélangés. */
+  grid-auto-rows:clamp(112px,13.5vw,205px);grid-auto-flow:row dense}
 @media (min-width:760px){.galerie{grid-template-columns:repeat(3,1fr)}}
 @media (min-width:1100px){.galerie{grid-template-columns:repeat(4,1fr)}}
-.galerie li{position:relative;overflow:hidden;border:1px solid var(--filet);background:var(--blanc)}
-.galerie li.est-haut{grid-row:span 2}
-.galerie .photo{height:100%}
-.galerie .photo img{cursor:zoom-in;transform:translateY(var(--glisse,0px)) scale(1.02)}
+.galerie li{position:relative;overflow:hidden;border:1px solid var(--filet);
+  background:var(--blanc);grid-row:span 2}
+.galerie li.est-haut{grid-row:span 3}
+.galerie .photo{position:absolute;inset:0;height:auto}
+.galerie .photo img{width:100%;height:100%;object-fit:cover;cursor:zoom-in;
+  transform:translateY(var(--glisse,0px)) scale(1.02)}
 .galerie li:hover .photo img{transform:translateY(var(--glisse,0px)) scale(1.07)}
-.galerie .attente{min-height:190px}
+.galerie .attente{position:absolute;inset:0;min-height:0}
 
 /* ======================= bandeau plein cadre ======================= */
 .bandeau{position:relative;display:grid;align-items:end;min-height:min(70svh,620px);
