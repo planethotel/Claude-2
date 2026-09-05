@@ -13,14 +13,13 @@
 <meta property="og:title" content="Cordonnerie Bonnet — Cordonnerie traditionnelle à Tours">
 <meta property="og:description" content="Une seconde vie pour les chaussures habillées et décontractées. Réparation, entretien du cuir, produits Saphir, souliers reconditionnés.">
 <meta property="og:url" content="https://www.cordonnerie-bonnet.fr/">
+<meta property="og:image" content="https://www.cordonnerie-bonnet.fr/assets/photos/devanture.jpg">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/bodoni-moda-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/jost-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/style.css">
 
-<!-- Fiche établissement pour les moteurs de recherche.
-     À garder en accord avec js/data.js si les horaires changent. -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -44,10 +43,8 @@
     "https://www.instagram.com/cordonnerie.bonnet"
   ],
   "openingHoursSpecification": [
-    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday","Wednesday","Thursday","Friday"],
-      "opens": "09:00", "closes": "12:30" },
-    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday","Wednesday","Thursday","Friday"],
-      "opens": "13:30", "closes": "19:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "12:30" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday","Wednesday","Thursday","Friday"], "opens": "13:30", "closes": "19:00" },
     { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "10:00", "closes": "12:30" },
     { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "13:30", "closes": "18:00" }
   ]
@@ -56,23 +53,13 @@
 </head>
 <body>
 
-<div class="chargement" id="chargement" aria-hidden="true">
-  <div class="chargement__bloc">
-    <span class="mono marque__mono" style="color:#a97c3a">R<i>/</i>B</span>
-    <span class="marque__nom" style="color:#a2988a">Cordonnerie Bonnet</span>
-    <span class="chargement__barre"><i></i></span>
-  </div>
-</div>
-
 <a class="saut" href="#contenu">Aller au contenu</a>
 
-<!-- ===================== bandeau d'annonce ===================== -->
 <aside class="annonce" id="annonce" hidden>
   <b id="annonce-texte"></b>
   <button type="button" id="annonce-fermer" aria-label="Fermer l’annonce">&times;</button>
 </aside>
 
-<!-- ===================== en-tête ===================== -->
 <header class="entete" id="entete">
   <a class="marque" href="#haut" aria-label="Cordonnerie Bonnet, accueil">
     <span class="mono marque__mono">R<i>/</i>B</span>
@@ -84,9 +71,9 @@
 
   <nav class="entete__nav" id="menu" aria-label="Navigation principale">
     <a href="#metiers">Le métier</a>
-    <a href="#prestations">Prestations</a>
     <a href="#avantapres">Avant / Après</a>
     <a href="#galerie">Galerie</a>
+    <a href="#prestations">Prestations</a>
     <a href="#boutique">Boutique</a>
     <a href="#artisan">L’artisan</a>
     <a href="#contact">Contact</a>
@@ -101,76 +88,117 @@
 
 <main id="contenu">
 
-<!-- ============ scène 3D : couvre l'accueil et le savoir-faire ============ -->
-<div class="scene" id="scene">
-  <canvas class="scene__canvas" id="canvas3d" aria-hidden="true"></canvas>
+<!-- ============================ accueil ============================ -->
+<section class="hero" id="haut">
+  <div class="hero__fond" id="hero-fond"></div>
+  <div class="hero__voile" aria-hidden="true"></div>
 
-  <div class="annotations" id="annotations" aria-hidden="true">
-    <div class="anno" data-anno="tige"><b>La tige</b><span>Le cuir du dessus. Nettoyée, nourrie, teinte, puis glacée.</span></div>
-    <div class="anno" data-anno="trepointe"><b>La trépointe</b><span>Le liseré cousu qui tient la tige à la semelle.</span></div>
-    <div class="anno" data-anno="semelle"><b>La semelle</b><span>Cuir pleine fleur, taillée à la forme puis cousue.</span></div>
-    <div class="anno" data-anno="talon"><b>Le talon</b><span>Empilé couche par couche, bonbout neuf en surface.</span></div>
+  <div class="hero__inner">
+    <p class="surtitre" data-rev>31 boulevard Heurteloup · Tours</p>
+    <h1 class="hero__titre" data-rev="80">Cordonnerie <em>traditionnelle</em>
+      <span class="nowrap">à Tours</span></h1>
+    <p class="hero__texte" data-rev="160">
+      À deux pas de la gare, au 31 boulevard Heurteloup, la Cordonnerie Bonnet
+      donne une seconde vie aux chaussures habillées et décontractées.
+    </p>
+    <div class="hero__actions" data-rev="240">
+      <a class="bouton bouton--plein" href="#avantapres">Voir le travail</a>
+      <a class="bouton" href="#contact">Venir à l’atelier</a>
+    </div>
   </div>
 
-  <!-- ------------------------- accueil ------------------------- -->
-  <section class="hero" id="haut">
-    <div class="hero__inner">
-      <p class="surtitre" data-rev>31 boulevard Heurteloup · Tours</p>
-      <h1 class="hero__titre" data-rev>Cordonnerie <em>traditionnelle</em>
-        <span class="nowrap">à Tours</span></h1>
-      <p class="hero__texte" data-rev>
-        À deux pas de la gare, au 31 boulevard Heurteloup, la Cordonnerie Bonnet
-        donne une seconde vie aux chaussures habillées et décontractées.
-      </p>
-      <div class="hero__actions" data-rev>
-        <a class="bouton bouton--plein" href="#contact">Venir à l’atelier</a>
-        <a class="bouton" href="#prestations">Voir les prestations</a>
-      </div>
-    </div>
+  <div class="hero__services" id="hero-services" aria-hidden="true"></div>
+  <div class="defiler" aria-hidden="true"><span>Faites défiler</span><i></i></div>
+</section>
 
-    <div class="hero__services" id="hero-services" aria-hidden="true"></div>
-
-    <div class="defiler" aria-hidden="true"><span>Faites défiler</span><i></i></div>
-  </section>
-
-  <!-- ---------------------- savoir-faire ---------------------- -->
-  <section class="savoir" id="savoirfaire">
-    <div class="savoir__texte">
-      <p class="surtitre" data-rev>Le geste</p>
-      <h2 class="titre" data-rev>Un soulier, <em>pièce par pièce</em></h2>
-      <p data-rev>
-        On ne répare pas une chaussure, on la démonte. La semelle se sépare de la
-        tige, le talon se dépile couche après couche, le cuir se décrasse avant
-        d’être nourri. Chaque pièce a son traitement, son cuir, son fil.
-      </p>
-      <p data-rev>
-        C’est en remontant l’ensemble que la paire retrouve son aplomb — et,
-        souvent, une tenue qu’elle n’avait plus depuis longtemps.
-      </p>
-      <p class="savoir__note" data-rev>Le soulier se démonte au fil du défilement.</p>
-    </div>
-  </section>
-</div>
-
-<!-- ------------------------ les quatre métiers ------------------------ -->
+<!-- ========================= les quatre métiers ========================= -->
 <section class="section clair" id="metiers">
   <div class="cadre">
-    <header class="section-tete">
-      <p class="surtitre" data-rev>Ce que je fais</p>
-      <h2 class="titre" data-rev>Quatre métiers, <em>un seul établi</em></h2>
-    </header>
+    <div class="metiers__haut">
+      <div class="metiers__mots">
+        <p class="surtitre" data-rev>Ce que je fais</p>
+        <h2 class="titre" data-rev>Quatre métiers, <em>un seul établi</em></h2>
+        <ul class="questions" id="questions"></ul>
+        <p class="accroche" data-rev>
+          Votre artisan cordonnier met tout en œuvre pour vous chausser
+          durablement et avec goût.
+        </p>
+      </div>
+      <div class="metiers__photo" data-rev id="photo-atelier-1"></div>
+    </div>
 
     <ol class="piliers" id="piliers"></ol>
+  </div>
+</section>
 
-    <ul class="questions" id="questions"></ul>
-    <p class="accroche" data-rev>
-      Votre artisan cordonnier met tout en œuvre pour vous chausser durablement
-      et avec goût.
+<!-- =========================== avant / après =========================== -->
+<section class="section sombre avant-apres" id="avantapres">
+  <div class="cadre">
+    <header class="section-tete">
+      <p class="surtitre" data-rev>La preuve</p>
+      <h2 class="titre" data-rev>Avant / <em>Après</em></h2>
+      <p class="section-tete__chapo" id="ap-chapo" data-rev></p>
+    </header>
+  </div>
+
+  <div class="fondu" id="fondu">
+    <div class="fondu__scene" id="fondu-scene">
+      <canvas id="fondu-canvas" aria-hidden="true"></canvas>
+      <div class="fondu__images" id="fondu-images" aria-hidden="true"></div>
+      <div class="fondu__attente" id="fondu-attente">
+        <b>Avant / Après</b>
+        <span>Vos deux photos apparaîtront ici, l’une se transformant en l’autre.</span>
+        <em>Photos à ajouter</em>
+      </div>
+      <span class="fondu__etiq fondu__etiq--g">Avant</span>
+      <span class="fondu__etiq fondu__etiq--d">Après</span>
+    </div>
+
+    <div class="fondu__barre">
+      <div class="fondu__legende">
+        <b id="fondu-titre"></b>
+        <span id="fondu-geste"></span>
+      </div>
+      <label class="fondu__curseur">
+        <span class="visuellement-cache">Avancer la restauration</span>
+        <input type="range" id="fondu-range" min="0" max="1000" value="0">
+      </label>
+      <button class="fondu__rejouer" id="fondu-rejouer" type="button">Rejouer</button>
+    </div>
+
+    <ul class="fondu__cas" id="fondu-cas" role="tablist" aria-label="Choisir un exemple"></ul>
+  </div>
+</section>
+
+<!-- ============================= galerie ============================= -->
+<section class="section clair" id="galerie">
+  <div class="cadre">
+    <header class="section-tete">
+      <p class="surtitre" data-rev>À l’atelier</p>
+      <h2 class="titre" data-rev>Galerie</h2>
+      <p class="section-tete__chapo" data-rev>
+        Des paires passées entre mes mains : ressemelages, ferrages, patines,
+        maroquinerie. Cliquez pour agrandir.
+      </p>
+    </header>
+    <ul class="galerie" id="galerie-grille"></ul>
+  </div>
+</section>
+
+<!-- ============================ l'atelier ============================ -->
+<section class="bandeau" id="bandeau-atelier" aria-label="L’atelier">
+  <div class="bandeau__photo" id="photo-atelier-2"></div>
+  <div class="bandeau__mots">
+    <p class="surtitre" data-rev>Le comptoir</p>
+    <p class="bandeau__texte" data-rev>
+      Un mur vert canard, un canapé de cuir fauve, des rayonnages de crèmes et
+      de brosses, un présentoir de lacets. On y entre avec une paire fatiguée,
+      on en ressort avec un conseil.
     </p>
   </div>
 </section>
 
-<!-- ------------------------ prestations ------------------------ -->
+<!-- =========================== prestations =========================== -->
 <section class="section clair clair--blanc" id="prestations">
   <div class="cadre">
     <header class="section-tete">
@@ -182,10 +210,8 @@
         immédiat et gratuit.
       </p>
     </header>
-
     <div class="filtres" id="filtres" role="tablist" aria-label="Filtrer les prestations"></div>
     <ul class="liste-prestations" id="liste-prestations"></ul>
-
     <div class="devis" data-rev>
       <a class="bouton bouton--plein" href="#form">Demander un devis</a>
       <span class="mineur">ou appelez le <a href="tel:+33247470782">02 47 47 07 82</a></span>
@@ -193,74 +219,25 @@
   </div>
 </section>
 
-<!-- ------------------------ avant / après ------------------------ -->
-<section class="section sombre" id="avantapres">
-  <div class="cadre">
-    <header class="section-tete">
-      <p class="surtitre" data-rev>La preuve</p>
-      <h2 class="titre" data-rev>Avant / <em>Après</em></h2>
-      <p class="section-tete__chapo" id="ap-chapo" data-rev></p>
-    </header>
-
-    <div class="exemple" id="exemple" data-rev></div>
-
-    <div class="compare">
-      <div class="compare__zone" id="compare-zone">
-        <canvas id="canvas-compare"></canvas>
-        <span class="compare__etiq compare__etiq--g">Avant</span>
-        <span class="compare__etiq compare__etiq--d">Après</span>
-        <div class="compare__poignee" id="compare-poignee" tabindex="0" role="slider"
-             aria-label="Comparer avant et après" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
-          <i></i>
-        </div>
-      </div>
-      <p class="compare__legende">
-        Le même soulier, la même lumière, la même pose : semelle percée, talon
-        affaissé et cuir desséché à gauche ; semelle cuir neuve, talon reconstruit,
-        teinte reprise et glaçage à droite.
-      </p>
-    </div>
-
-    <ul class="paires" id="paires"></ul>
-  </div>
-</section>
-
-<!-- --------------------------- galerie --------------------------- -->
-<section class="section clair" id="galerie">
-  <div class="cadre">
-    <header class="section-tete">
-      <p class="surtitre" data-rev>À l’atelier</p>
-      <h2 class="titre" data-rev>Galerie</h2>
-      <p class="section-tete__chapo" data-rev>
-        Des paires passées entre mes mains : ressemelages, ferrages, patines,
-        maroquinerie. Les photos parlent mieux que les mots.
-      </p>
-    </header>
-    <ul class="galerie" id="galerie-grille"></ul>
-  </div>
-</section>
-
-<!-- --------------------------- boutique --------------------------- -->
-<section class="section clair clair--blanc" id="boutique">
+<!-- ============================= boutique ============================= -->
+<section class="section clair" id="boutique">
   <div class="cadre">
     <header class="section-tete">
       <p class="surtitre" data-rev>En vitrine</p>
       <h2 class="titre" data-rev>La boutique</h2>
     </header>
-
     <div class="onglets" id="onglets" role="tablist" aria-label="Rayons de la boutique"></div>
-
     <p class="boutique__chapo" id="boutique-chapo"></p>
     <ul class="rayon" id="rayon"></ul>
     <p class="boutique__pied" id="boutique-pied"></p>
   </div>
 </section>
 
-<!-- --------------------------- l'artisan --------------------------- -->
+<!-- ============================= l'artisan ============================= -->
 <section class="section sombre" id="artisan">
   <div class="cadre">
     <div class="artisan__grille">
-      <div class="artisan__portrait" data-rev id="artisan-portrait"></div>
+      <div class="artisan__portrait" data-rev id="photo-artisan"></div>
       <div class="artisan__texte">
         <p class="surtitre" data-rev>Qui répare vos souliers</p>
         <h2 class="titre" data-rev>L’artisan</h2>
@@ -271,7 +248,7 @@
   </div>
 </section>
 
-<!-- ---------------------------- contact ---------------------------- -->
+<!-- ============================== contact ============================== -->
 <section class="section clair" id="contact">
   <div class="cadre">
     <header class="section-tete">
@@ -328,15 +305,9 @@
 
       <form class="carte carte--form" id="form" data-rev novalidate>
         <h3>Demander un devis</h3>
-        <p class="mineur">
-          Décrivez la paire ou l’article à réparer : je vous réponds avec une estimation.
-        </p>
-        <label>Nom
-          <input type="text" name="nom" autocomplete="name" required>
-        </label>
-        <label>Téléphone ou e-mail
-          <input type="text" name="contact" autocomplete="email" required>
-        </label>
+        <p class="mineur">Décrivez la paire ou l’article à réparer : je vous réponds avec une estimation.</p>
+        <label>Nom <input type="text" name="nom" autocomplete="name" required></label>
+        <label>Téléphone ou e-mail <input type="text" name="contact" autocomplete="email" required></label>
         <label>Ce qu’il y a à faire
           <textarea name="message" rows="4" required
             placeholder="Ex. : richelieu cuir noir, semelle percée à l’avant, bonbout usé d’un côté."></textarea>
@@ -350,7 +321,6 @@
 
 </main>
 
-<!-- ----------------------------- pied ----------------------------- -->
 <footer class="pied">
   <div class="cadre">
     <div class="pied__haut">
@@ -361,16 +331,14 @@
           <span class="marque__sous">31, boulevard Heurteloup — Tours</span>
         </span>
       </a>
-
       <nav aria-label="Pied de page">
         <a href="#metiers">Le métier</a>
-        <a href="#prestations">Prestations</a>
         <a href="#avantapres">Avant / Après</a>
         <a href="#galerie">Galerie</a>
+        <a href="#prestations">Prestations</a>
         <a href="#boutique">Boutique</a>
         <a href="#contact">Contact</a>
       </nav>
-
       <div class="pied__droite" id="pied-droite"></div>
     </div>
 
@@ -393,7 +361,7 @@
           n’utilise aucun outil de mesure d’audience. Les polices de caractères et les
           scripts sont hébergés sur le site : aucune donnée n’est transmise à un service
           tiers lors de votre visite. Le formulaire de devis ouvre votre messagerie et
-          n’enregistre rien sur le site.</p>
+          n’enregistre rien.</p>
         <p><strong>Propriété intellectuelle</strong> — Les photographies et les textes
           sont la propriété de la Cordonnerie Bonnet. Les marques citées (Saphir,
           Collonil, Nanex, ainsi que les marques des souliers proposés en seconde vie)
@@ -404,9 +372,18 @@
   </div>
 </footer>
 
-<script type="importmap">
-{ "imports": { "three": "./vendor/three.module.min.js" } }
-</script>
+<!-- ============================ plein écran ============================ -->
+<div class="plein" id="plein" hidden>
+  <button class="plein__fermer" type="button" aria-label="Fermer">&times;</button>
+  <button class="plein__prec" type="button" aria-label="Photo précédente">&#8249;</button>
+  <img alt="">
+  <button class="plein__suiv" type="button" aria-label="Photo suivante">&#8250;</button>
+  <div class="plein__pied">
+    <span class="plein__legende"></span>
+    <span class="plein__compteur"></span>
+  </div>
+</div>
+
 <script type="module" src="js/main.js"></script>
 </body>
 </html>

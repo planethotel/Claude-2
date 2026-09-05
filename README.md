@@ -1,10 +1,13 @@
 # Cordonnerie Bonnet — site vitrine
 
 Refonte du site de la **Cordonnerie Bonnet**, artisan cordonnier au 31 boulevard
-Heurteloup à Tours. Le contenu reprend le site existant ; la mise en scène est
-neuve, avec un soulier en 3D entièrement construit par le code, qui se démonte
-au fil du défilement, et un comparateur avant / après où le même soulier est
-rendu deux fois — usé à gauche, restauré à droite.
+Heurteloup à Tours. Le site est construit autour des photographies de l'atelier :
+elles mènent la page, le texte les accompagne.
+
+La pièce maîtresse est le **fondu avant / après** : deux vraies photos d'une
+même paire, la restaurée apparaissant sur l'usée par un balayage au front
+irrégulier — le geste du chiffon. C'est du WebGL écrit à la main, une centaine
+de lignes, sans aucune bibliothèque.
 
 ## Ouvrir le site
 
@@ -28,17 +31,44 @@ index.html              la page entière + la fiche établissement pour Google
 css/style.css           l'habillage : noir · blanc · cuir
 css/fonts.css           les polices, hébergées sur le site
 js/data.js              ← TOUT LE CONTENU MODIFIABLE EST ICI
+js/transition.js        le fondu avant / après (WebGL, sans bibliothèque)
+js/anim.js              parallaxe, apparitions, plein écran
 js/dessins.js           les dessins au trait du catalogue
-js/shoe.js              le soulier 3D : forme, cuirs, semelle, talon, laçage
-js/hero.js              l'accueil et le démontage au défilement
-js/compare.js           le comparateur avant / après en volume
 js/main.js              l'assemblage de la page
-vendor/                 three.js (copie locale, licence MIT incluse)
 assets/fonts/           Bodoni Moda et Jost (licence SIL OFL incluse)
-assets/avant-apres/     visuels provisoires, à remplacer par vos photos
+assets/photos/          ← VOS PHOTOS VONT ICI
 ```
 
+Le site ne pèse que quelques centaines de kilo-octets, polices comprises :
+aucune bibliothèque JavaScript, aucun CDN, aucune image de synthèse.
+
 ---
+
+## Déposer vos photos
+
+Tout part de là. Le dossier `assets/photos/` attend :
+
+```
+assets/photos/
+  devanture.jpg              la vitrine, vue de la rue         (paysage, ≥ 2000 px)
+  atelier-1.jpg              l'intérieur, le mur vert canard   (portrait)
+  atelier-2.jpg              le comptoir et les rayonnages     (paysage)
+  artisan.jpg                vous, à l'établi                  (portrait)
+  galerie/01.jpg … 10.jpg    vos photos de paires
+  avant-apres/01-avant.jpg   et 01-apres.jpg, 02-avant.jpg, 02-apres.jpg…
+  boutique/                  les produits, si vous en avez
+```
+
+**L'extension n'a pas d'importance** : `.jpg`, `.jpeg`, `.png` ou `.webp`
+fonctionnent, le site essaie les quatre. Et une photo manquante ne casse rien :
+un cadre légendé prend sa place, en indiquant précisément quelle image doit
+venir là.
+
+Pour l'avant / après : **même cadrage, même lumière, même fond** sur les deux
+prises de vue. C'est ce qui rend la comparaison lisible — et le fondu propre.
+
+Les titres et légendes des photos se règlent dans `js/data.js`, blocs `PHOTOS`,
+`GALERIE` et `AVANT_APRES`.
 
 ## Modifier le contenu — `js/data.js`
 
@@ -104,20 +134,10 @@ ajouter.
 
 ### Galerie et Avant / Après
 
-`GALERIE` et `AVANT_APRES` fonctionnent pareil : tant qu'une entrée n'a pas de
-`photo`, un cadre légendé « photo à ajouter » prend sa place. Déposez vos images
-dans `assets/` et indiquez le chemin :
-
-```js
-{ titre: 'Bottines cuir brun', note: 'Semelle neuve',
-  photo: 'assets/galerie/bottines.jpg', format: 'haut' }
-```
-
-`format: 'haut'` fait occuper deux rangées à la vignette, pour aérer la grille.
-
-Pour l'avant / après, deux images par bloc. **Même cadrage, même lumière, même
-fond sur les deux prises de vue** : c'est ce qui rend la comparaison lisible.
-Format paysage, environ 1600 × 1200 px.
+`format: 'haut'` fait occuper deux rangées à une vignette de la galerie, pour
+aérer la grille. Dans `AVANT_APRES`, chaque cas porte un `titre` et un `geste`
+(ce que vous avez fait) : ils s'affichent sous le fondu. Un cas dont les deux
+photos manquent est simplement ignoré.
 
 ### L'artisan
 
@@ -152,7 +172,8 @@ les 9 accessoires et les 6 paires de seconde vie, avec leurs descriptions.
 1. **Une vraie page de prestations** — 15 interventions détaillées et filtrables,
    au lieu de quatre lignes sur l'accueil.
 2. **Un formulaire de demande de devis**, qui n'existait pas.
-3. **Un vrai comparateur avant / après** au curseur, au lieu d'un accordéon.
+3. **Un vrai avant / après** : la photo restaurée apparaît sur l'usée par un
+   balayage, au défilement ou au curseur — au lieu d'un accordéon.
 4. **Les descriptions produits sont visibles**, plus cachées derrière un chevron :
    elles se lisent d'un coup d'œil, et Google les indexe.
 5. **Référencement** — titre et description propres, URL canonique, balises Open
@@ -165,22 +186,22 @@ les 9 accessoires et les 6 paires de seconde vie, avec leurs descriptions.
 
 ## Choix techniques
 
-- **Aucune requête vers l'extérieur.** three.js, les polices et les images sont
-  servis par le site lui-même. Rien ne part chez Google ni sur un CDN : c'est
-  plus rapide, et cela règle la question du RGPD sur les polices Google.
-- **Le soulier 3D n'est pas un fichier téléchargé.** La forme est décrite par des
-  courbes (largeur, hauteur et ouverture du col le long du pied), la semelle et
-  le talon empilé sont extrudés depuis ce contour, le laçage suit les œillets, et
-  les cuirs sont peints à la volée sur des `canvas` — patine plus sombre au talon
-  et au bout, glaçage, coutures, perforations. Tout se règle en haut de
-  `js/shoe.js`.
-- **Sobriété.** Les scènes 3D se mettent en pause dès qu'elles sortent de l'écran,
-  la résolution est plafonnée, et le comparateur ne démarre pas si le visiteur a
-  demandé à son système de réduire les animations. Le site pèse environ 1 Mo.
+- **Aucune requête vers l'extérieur.** Les polices et les images sont servies par
+  le site lui-même, et il n'y a aucune bibliothèque à charger. Rien ne part chez
+  Google ni sur un CDN : c'est plus rapide, et cela règle la question du RGPD sur
+  les polices Google.
+- **Aucune image de synthèse.** Ce que le visiteur voit, ce sont vos photos.
+  Le seul calcul graphique est le fondu avant / après : un nuanceur qui mélange
+  deux photographies, écrit à la main dans `js/transition.js`. Si la carte
+  graphique fait défaut, le site retombe sur un fondu enchaîné classique.
+- **Sobriété.** Les animations se mettent en pause dès qu'elles quittent l'écran,
+  la résolution est plafonnée, les photos se chargent à la demande, et tout
+  mouvement s'arrête si le visiteur a demandé à son système de réduire les
+  animations.
 - **Accessibilité.** Navigation au clavier, lien d'évitement, curseur avant/après
   pilotable aux flèches, textes alternatifs, contrastes soutenus.
 
 ## Licences
 
-- three.js — MIT (`vendor/three-LICENSE.txt`)
 - Bodoni Moda, Jost — SIL Open Font License (`assets/fonts/LICENSE-*.txt`)
+- Aucune autre dépendance.
