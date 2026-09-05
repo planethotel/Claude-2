@@ -264,6 +264,7 @@ function navigation() {
 }
 
 function apparitions() {
+  document.documentElement.classList.add('js');
   const obs = new IntersectionObserver((entrees) => {
     entrees.forEach((e, i) => {
       if (!e.isIntersecting) return;

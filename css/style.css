@@ -580,10 +580,12 @@ a{color:inherit}
 .mentions__corps p{margin:0 0 .7rem}
 
 /* ---------------- apparitions ---------------- */
-[data-rev]{opacity:0;transform:translateY(22px);
+/* Le contenu est visible par défaut : l'effet d'apparition ne s'applique que
+   si le script tourne. Sans JavaScript, la page reste entièrement lisible. */
+.js [data-rev]{opacity:0;transform:translateY(22px);
   transition:opacity .85s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.2,.7,.2,1)}
-[data-rev].est-vu{opacity:1;transform:none}
+.js [data-rev].est-vu{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
-  [data-rev]{opacity:1;transform:none;transition:none}
+  .js [data-rev]{opacity:1;transform:none;transition:none}
   .defiler i,.pastille,.plan__pin{animation:none}
 }
