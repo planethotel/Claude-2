@@ -84,16 +84,22 @@ export function lancerScene({ canvas, zone, sectionDebut, sectionFin, annotation
 
   /* ------------------------------------------------------------------ */
   const projete = new THREE.Vector3();
-  /* points d'accroche, exprimés dans le repère du soulier lui-même
-     (x : talon → bout, y : hauteur, z : côté visible) */
+  /* Points d'accroche, exprimés dans le repère du soulier lui-même :
+     x va du talon vers le bout, y donne la hauteur, z le côté visible ;
+     les deux derniers nombres décalent l'étiquette à l'écran. */
   const ancres = {
-    couture: () => [-0.62, hautDeForme.position.y + 0.44, 0.30, 22, -30],
-    patine:  () => [ 1.00, hautDeForme.position.y + 0.26, 0.06, 22,  -4],
-    semelle: () => [ 0.34, blocSemelle.position.y + 0.07, 0.42, 22,  28],
-    talon:   () => [-1.06, blocTalon.position.y   + 0.02, 0.26, 22, 122]
+    tige:      () => [-0.28, hautDeForme.position.y + 0.50, 0.30, 22, -34],
+    trepointe: () => [-0.30, blocSemelle.position.y + 0.20, 0.44, 22, -14],
+    semelle:   () => [ 0.20, blocSemelle.position.y - 0.02, 0.42, 22,  20],
+    talon:     () => [-1.06, blocTalon.position.y   + 0.02, 0.26, 22,  56]
   };
 
-  function placerAnnotations(visible) {
+  function placerAnnotations(actif) {
+    const etroit = l < 980;
+    const largeurEtiq = etroit ? 165 : 235;
+    const gaucheMin = etroit ? 8 : l * 0.415;
+    const poses = [];
+
     for (const el of annotations) {
       const cle = el.dataset.anno;
       if (!ancres[cle]) continue;
@@ -101,17 +107,28 @@ export function lancerScene({ canvas, zone, sectionDebut, sectionFin, annotation
       projete.set(a[0], a[1], a[2]);
       soulier.localToWorld(projete);
       projete.project(camera);
-      const etroit = l < 980;
-      const largeurEtiq = etroit ? 165 : 235;
-      /* sur grand écran les étiquettes restent à droite : la colonne de
-         texte, à gauche, n'est jamais recouverte */
-      const gaucheMin = etroit ? 8 : l * 0.415;
-      const x = THREE.MathUtils.clamp(
-        (projete.x * 0.5 + 0.5) * l + a[3], gaucheMin, l - largeurEtiq - 14);
-      const y = THREE.MathUtils.clamp(
-        (-projete.y * 0.5 + 0.5) * h + (etroit ? 0 : a[4]), 92, h - 108);
-      el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
-      el.classList.toggle('is-on', visible && projete.z < 1);
+      poses.push({
+        el,
+        devant: projete.z < 1,
+        x: THREE.MathUtils.clamp((projete.x * 0.5 + 0.5) * l + a[3],
+                                 gaucheMin, l - largeurEtiq - 14),
+        y: THREE.MathUtils.clamp((-projete.y * 0.5 + 0.5) * h + (etroit ? 0 : a[4]),
+                                 92, h - 108)
+      });
+    }
+
+    /* Les étiquettes gardent l'ordre du soulier — tige, trépointe, semelle,
+       talon — et se poussent vers le bas pour ne jamais se recouvrir. */
+    const ECART = etroit ? 44 : 82;
+    for (let i = 1; i < poses.length; i++) {
+      poses[i].y = Math.max(poses[i].y, poses[i - 1].y + ECART);
+    }
+    const debord = poses.length ? poses[poses.length - 1].y - (h - 108) : 0;
+    if (debord > 0) poses.forEach((p) => { p.y -= debord; });
+
+    for (const p of poses) {
+      p.el.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0)`;
+      p.el.classList.toggle('is-on', actif && p.devant);
     }
   }
 
