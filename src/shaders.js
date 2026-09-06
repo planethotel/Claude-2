@@ -151,6 +151,10 @@ uniform vec3 uColor1;
 uniform vec3 uColor2;
 uniform vec3 uColor3;
 uniform vec3 uCameraPosition;
+uniform samplerCube uEnvMap;
+uniform float uEnvMaxLod;
+uniform float uMetalness;
+uniform float uRoughness;
 uniform vec3 uEnvSky;
 uniform vec3 uEnvGround;
 uniform float uBrightness;
@@ -200,6 +204,18 @@ void main() {
   }
 
   vec3 color = albedo * lighting * uBrightness;
+
+  if (uMetalness > 0.0) {
+    // Chrome: what you see is the room, tinted by the surface. Roughness picks
+    // a blurrier mip of the same environment, and the Fresnel term keeps the
+    // grazing angles bright the way real metal does.
+    vec3 reflection = reflect(-viewDir, normal);
+    vec3 env = textureLod(uEnvMap, reflection, uRoughness * uEnvMaxLod).rgb;
+    vec3 tint = mix(vec3(1.0), albedo, 0.75);
+    float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 5.0);
+    vec3 metal = env * tint * (1.0 + fresnel * 1.5) * uBrightness;
+    color = mix(color, metal, uMetalness);
+  }
 
   if (uGrain == 1) {
     float noise = hash(gl_FragCoord.xy + fract(uTime) * 137.0) - 0.5;

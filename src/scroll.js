@@ -11,7 +11,7 @@ const KEYFRAMES = [
     color1: '#ff5005', color2: '#ffcfa0', color3: '#9d7cf0', bgColor: '#0b0b0f',
     rotationX: -45, cAzimuthAngle: 180, cPolarAngle: 105, cDistance: 7.5,
     lightType: '3d', envPreset: 'city', brightness: 1.05, reflection: 0.2,
-    grain: 'on', grainBlending: 0.07,
+    metalness: 0, roughness: 0.12, grain: 'on', grainBlending: 0.07,
   },
   {
     type: 'plane', uSpeed: 0.3, uStrength: 0.75, uDensity: 1.6,
@@ -19,15 +19,15 @@ const KEYFRAMES = [
     color1: '#00d2ff', color2: '#0b5d9e', color3: '#e8fbff', bgColor: '#03131f',
     rotationX: -55, cAzimuthAngle: 205, cPolarAngle: 82, cDistance: 9,
     lightType: 'env', envPreset: 'dawn', brightness: 1.25, reflection: 0.35,
-    grain: 'on', grainBlending: 0.07,
+    metalness: 0, roughness: 0.12, grain: 'on', grainBlending: 0.07,
   },
   {
     type: 'sphere', uSpeed: 0.35, uStrength: 0.35, uDensity: 1.4,
     uFrequency: 2, uAmplitude: 0.3, wireframe: false,
-    color1: '#e879f9', color2: '#4338ca', color3: '#22d3ee', bgColor: '#08060f',
+    color1: '#ffd9c0', color2: '#cfd6ff', color3: '#ffffff', bgColor: '#08060f',
     rotationX: 0, cAzimuthAngle: 250, cPolarAngle: 95, cDistance: 6.5,
-    lightType: '3d', envPreset: 'city', brightness: 1.3, reflection: 0.4,
-    grain: 'on', grainBlending: 0.07,
+    lightType: '3d', envPreset: 'city', brightness: 1.15, reflection: 0.4,
+    metalness: 1, roughness: 0.06, grain: 'on', grainBlending: 0.07,
   },
   {
     type: 'plane', uSpeed: 0.5, uStrength: 0.6, uDensity: 1.1,
@@ -35,7 +35,7 @@ const KEYFRAMES = [
     color1: '#00ffa3', color2: '#0066ff', color3: '#ff00c8', bgColor: '#05060a',
     rotationX: -62, cAzimuthAngle: 300, cPolarAngle: 96, cDistance: 11,
     lightType: '3d', envPreset: 'city', brightness: 1.6, reflection: 0.2,
-    grain: 'off', grainBlending: 0.07,
+    metalness: 0, roughness: 0.12, grain: 'off', grainBlending: 0.07,
   },
 ]
 

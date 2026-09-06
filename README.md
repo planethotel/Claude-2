@@ -19,6 +19,13 @@ through four keyframes as you read down the page.
 
 ![Scroll-driven rig](docs/scroll.jpg)
 
+Turn `metalness` up and the same mesh becomes chrome, reflecting a studio
+environment generated at startup — no image assets, no library.
+
+| Chrome | Liquid metal |
+| --- | --- |
+| ![Chrome sphere](docs/chrome.jpg) | ![Liquid metal plane](docs/liquid.jpg) |
+
 ## Run it
 
 ES modules need a real origin, so open it through any static server:
@@ -44,7 +51,8 @@ position onto a path through four keyframes. Continuous values interpolate;
 discrete ones — mesh type, light rig, grain — step at the midpoint between two
 keyframes, since there is no halfway between a sphere and a plane. The eased
 position chases the raw scroll offset exponentially, so the delay feels the same
-at 30fps and at 144Hz.
+at 30fps and at 144Hz. `metalness` is one of the interpolated values, so the
+painted gradient melts into chrome around the third keyframe and back out.
 
 The rig owns every parameter it names for the whole page, and nothing else
 writes them. That is the point: the usual mess in a scroll-driven 3D scene is
@@ -74,6 +82,8 @@ in the URL.
 | `cDistance` / `cameraZoom` | 1–20 / 0.4–3 | Dolly distance and field of view |
 | `lightType` | `3d`, `env` | Two-light rig, or a hemisphere environment |
 | `envPreset` | `city`, `dawn`, `lobby` | Sky and bounce colours for `env` |
+| `metalness` | 0–1 | Blends from the painted gradient to a mirror |
+| `roughness` | 0–1 | Sharp chrome to brushed metal, by mip level |
 | `brightness` / `reflection` | 0–3 / 0–1 | Exposure and specular weight |
 | `grain` / `grainBlending` | `on`, `off` / 0–0.6 | Per-pixel film grain |
 
@@ -108,6 +118,15 @@ buffer down (to 55% at worst) when it can't hold the budget, taking the pixels
 back when it can. On a software rasteriser the scale settles around 0.7; on a
 real GPU it stays at 1.
 
+**Chrome.** A mirror needs something to reflect, and this project ships no
+image assets, so `src/envmap.js` generates the room: sky, floor, a bright
+horizon line and three softboxes, evaluated per direction into the six faces of
+a cubemap so they meet without seams. The fragment shader reflects the view
+vector, samples that map — at a blurrier mip the rougher the surface — tints it
+by the colour ramp and adds a Fresnel rim, then blends the result over the lit
+gradient by `metalness`. The `Chrome` and `Liquid` presets are the two ends of
+it.
+
 **Teardown.** `ShaderGradient#dispose()` deletes the buffers, vertex arrays and
 program it created — unbinding the program first, or `deleteProgram` merely
 flags it while it is still current. Both pages register their listeners against
@@ -124,10 +143,21 @@ src/scroll.js     scroll rig: keyframes, easing, one owner per parameter
 src/gradient.js   renderer — meshes, uniforms, camera, draw loop
 src/shaders.js    GLSL sources
 src/geometry.js   plane, sphere and wireframe index generation
-src/gl.js         program compilation and 4×4 matrix helpers
+src/gl.js         program compilation, 4×4 matrix helpers, colour mixing
+src/envmap.js     procedural studio cubemap for metal reflections
 src/params.js     parameter schema, defaults, presets, query-string round trip
 src/ui.js         control panel construction
 ```
+
+## Skills
+
+`.claude/skills/` carries 22 design and 3D skills vendored from
+[freshtechbro/claudedesignskills](https://github.com/freshtechbro/claudedesignskills)
+(MIT) — Three.js, React Three Fiber, GSAP ScrollTrigger, Motion, Babylon,
+PlayCanvas, PixiJS, Lottie, Rive, Spline, Locomotive Scroll, Barba, the Blender
+and Substance pipelines, and modern web design among them. They are committed to
+the repository rather than a home directory so they survive across sessions and
+machines.
 
 ## Notes
 

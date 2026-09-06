@@ -30,6 +30,8 @@ export const SCHEMA = [
 
   { key: 'lightType', label: 'Light', group: 'Light', kind: 'select', options: ['3d', 'env'] },
   { key: 'envPreset', label: 'Env preset', group: 'Light', kind: 'select', options: ['city', 'dawn', 'lobby'], only: 'env' },
+  { key: 'metalness', label: 'Metalness', group: 'Light', kind: 'range', min: 0, max: 1, step: 0.01 },
+  { key: 'roughness', label: 'Roughness', group: 'Light', kind: 'range', min: 0, max: 1, step: 0.01 },
   { key: 'brightness', label: 'Brightness', group: 'Light', kind: 'range', min: 0, max: 3, step: 0.01 },
   { key: 'reflection', label: 'Reflection', group: 'Light', kind: 'range', min: 0, max: 1, step: 0.01 },
 
@@ -68,6 +70,8 @@ export const DEFAULTS = {
   envPreset: 'city',
   brightness: 1.05,
   reflection: 0.2,
+  metalness: 0,
+  roughness: 0.12,
 
   grain: 'on',
   grainBlending: 0.07,
@@ -96,6 +100,20 @@ export const PRESETS = {
     uSpeed: 0.22, uStrength: 0.5, uDensity: 0.9, uFrequency: 1.6, uAmplitude: 0.45,
     rotationX: -62, cPolarAngle: 82, cDistance: 5.0, brightness: 1.1,
     lightType: 'env', envPreset: 'lobby', grainBlending: 0.2, bgColor: '#120a06',
+  },
+  Chrome: {
+    type: 'sphere', color1: '#ffd9c0', color2: '#cfd6ff', color3: '#ffffff',
+    uSpeed: 0.22, uStrength: 0.28, uDensity: 1.15, rotationX: 0,
+    cAzimuthAngle: 165, cPolarAngle: 92, cDistance: 6.2,
+    metalness: 1, roughness: 0.05, brightness: 1.1, grain: 'off',
+    bgColor: '#07070b',
+  },
+  Liquid: {
+    type: 'waterPlane', color1: '#ffe9d2', color2: '#d7e3ff', color3: '#ffffff',
+    uSpeed: 0.3, uStrength: 0.45, uDensity: 0.8, uFrequency: 1.8, uAmplitude: 0.3,
+    rotationX: -20, cAzimuthAngle: 180, cPolarAngle: 118, cDistance: 6.2,
+    metalness: 1, roughness: 0.15, brightness: 1.15, grain: 'off',
+    bgColor: '#05060a',
   },
   Mesh: {
     type: 'plane', wireframe: true, color1: '#00ffa3', color2: '#0066ff', color3: '#ff00c8',

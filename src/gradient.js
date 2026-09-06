@@ -2,6 +2,7 @@ import { createProgram, uniformLocations, mat4, hexToRgb } from './gl.js'
 import { VERTEX_SHADER, FRAGMENT_SHADER } from './shaders.js'
 import { plane, sphere, gridWireframe } from './geometry.js'
 import { DEFAULTS, ENV_PRESETS } from './params.js'
+import { createEnvironmentMap } from './envmap.js'
 
 const SEGMENTS = 200
 const TYPE_IDS = { plane: 0, sphere: 1, waterPlane: 2 }
@@ -41,6 +42,8 @@ export class ShaderGradient {
     gl.enable(gl.DEPTH_TEST)
     this.program = createProgram(gl, VERTEX_SHADER, FRAGMENT_SHADER)
     this.uniforms = uniformLocations(gl, this.program)
+
+    this.environment = createEnvironmentMap(gl)
 
     this.meshes = {
       plane: this.createMesh(plane(SEGMENTS, 14)),
@@ -177,6 +180,7 @@ export class ShaderGradient {
     gl.bindVertexArray(null)
     gl.useProgram(null)
     gl.deleteProgram(this.program)
+    gl.deleteTexture(this.environment.texture)
     this.buffers = []
     this.meshes = {}
     this.disposed = true
@@ -243,6 +247,12 @@ export class ShaderGradient {
     gl.uniform1f(u.uBrightness, p.brightness)
     gl.uniform1f(u.uReflection, p.reflection)
     gl.uniform1f(u.uGrainBlending, p.grainBlending)
+    gl.uniform1f(u.uMetalness, p.metalness)
+    gl.uniform1f(u.uRoughness, p.roughness)
+    gl.uniform1f(u.uEnvMaxLod, this.environment.maxLod)
+    gl.activeTexture(gl.TEXTURE0)
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.environment.texture)
+    gl.uniform1i(u.uEnvMap, 0)
     gl.uniform1i(u.uLightType, p.lightType === 'env' ? 1 : 0)
     gl.uniform1i(u.uGrain, p.grain === 'on' ? 1 : 0)
     gl.uniform1i(u.uWireframe, p.wireframe ? 1 : 0)
