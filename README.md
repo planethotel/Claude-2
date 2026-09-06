@@ -13,6 +13,12 @@ Nothing here is compiled or installed: no bundler, no npm packages, no
 | --- | --- |
 | ![Wireframe plane](docs/wireframe.jpg) | ![Displaced sphere](docs/sphere.jpg) |
 
+Two pages share the renderer: `index.html` is the sandbox with the control
+panel, and `scroll.html` is a scroll-driven rig that walks the same parameters
+through four keyframes as you read down the page.
+
+![Scroll-driven rig](docs/scroll.jpg)
+
 ## Run it
 
 ES modules need a real origin, so open it through any static server:
@@ -30,6 +36,19 @@ python3 -m http.server 8000
 - **Copy link** puts the current settings in a URL; the address bar tracks every
   change as you make it, so a reload never loses a look you liked.
 - **Save PNG** grabs the current frame at the canvas' device resolution.
+
+## Scroll rig
+
+`scroll.html` keeps the canvas fixed behind scrolling copy and maps scroll
+position onto a path through four keyframes. Continuous values interpolate;
+discrete ones — mesh type, light rig, grain — step at the midpoint between two
+keyframes, since there is no halfway between a sphere and a plane. The eased
+position chases the raw scroll offset exponentially, so the delay feels the same
+at 30fps and at 144Hz.
+
+The rig owns every parameter it names for the whole page, and nothing else
+writes them. That is the point: the usual mess in a scroll-driven 3D scene is
+two animators writing the same camera and neither winning.
 
 ## Parameters
 
@@ -82,12 +101,26 @@ re-uploaded and no geometry is rebuilt when a slider moves, so a parameter
 change is just a uniform write. Rendering stops entirely while the tab is
 hidden.
 
+**Drawing on demand.** With animation off, a frame is drawn only after something
+marks the view dirty — a parameter change, a resize — rather than every 16ms.
+The loop also averages its own frame time over 30 frames and scales the drawing
+buffer down (to 55% at worst) when it can't hold the budget, taking the pixels
+back when it can. On a software rasteriser the scale settles around 0.7; on a
+real GPU it stays at 1.
+
+**Teardown.** `ShaderGradient#dispose()` deletes the buffers, vertex arrays and
+program it created — unbinding the program first, or `deleteProgram` merely
+flags it while it is still current. Both pages register their listeners against
+one `AbortController` and dispose on `pagehide`.
+
 ## Layout
 
 ```
-index.html        page shell
-style.css         panel and canvas styling
-src/main.js       wiring: controls, URL state, pointer and keyboard input
+index.html        sandbox page shell
+scroll.html       scroll-driven rig page
+style.css         panel, canvas and scroll-page styling
+src/main.js       sandbox wiring: controls, URL state, pointer and keyboard input
+src/scroll.js     scroll rig: keyframes, easing, one owner per parameter
 src/gradient.js   renderer — meshes, uniforms, camera, draw loop
 src/shaders.js    GLSL sources
 src/geometry.js   plane, sphere and wireframe index generation

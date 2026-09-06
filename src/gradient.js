@@ -6,6 +6,14 @@ import { DEFAULTS, ENV_PRESETS } from './params.js'
 const SEGMENTS = 200
 const TYPE_IDS = { plane: 0, sphere: 1, waterPlane: 2 }
 
+// Adaptive resolution: sample this many frames before deciding to scale the
+// drawing buffer up or down, with a gap between the thresholds so a frame time
+// sitting near the boundary cannot oscillate.
+const SAMPLE_FRAMES = 30
+const SLOW_FRAME_MS = 20
+const FAST_FRAME_MS = 11
+const MIN_SCALE = 0.55
+
 export class ShaderGradient {
   constructor(canvas, params = {}) {
     this.canvas = canvas
@@ -13,6 +21,13 @@ export class ShaderGradient {
     this.time = 0
     this.lastFrame = 0
     this.running = false
+    // On-demand rendering: with animation off, frames are drawn only after
+    // something marks the view dirty.
+    this.needsRender = true
+    this.resolutionScale = 1
+    this.frameTimeTotal = 0
+    this.frameTimeCount = 0
+    this.buffers = []
 
     const gl = canvas.getContext('webgl2', {
       antialias: true,
@@ -57,18 +72,22 @@ export class ShaderGradient {
     for (const [name, data, size] of attributes) {
       const location = gl.getAttribLocation(this.program, name)
       if (location < 0) continue
-      gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer())
+      const buffer = gl.createBuffer()
+      this.buffers.push(buffer)
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
       gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW)
       gl.enableVertexAttribArray(location)
       gl.vertexAttribPointer(location, size, gl.FLOAT, false, 0, 0)
     }
 
     const triangles = gl.createBuffer()
+    this.buffers.push(triangles)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, triangles)
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geometry.indices, gl.STATIC_DRAW)
 
     const wireIndices = gridWireframe(geometry.grid.cols, geometry.grid.rows)
     const lines = gl.createBuffer()
+    this.buffers.push(lines)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, lines)
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, wireIndices, gl.STATIC_DRAW)
 
@@ -78,17 +97,44 @@ export class ShaderGradient {
 
   setParams(params) {
     Object.assign(this.params, params)
+    this.invalidate()
+  }
+
+  // Marks the view dirty. The loop draws the next frame; when it is not
+  // running, draw immediately so a still stays in step with its parameters.
+  invalidate() {
+    this.needsRender = true
     if (!this.running) this.render()
   }
 
   resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const dpr = Math.min(window.devicePixelRatio || 1, 2) * this.resolutionScale
     const width = Math.max(1, Math.round(this.canvas.clientWidth * dpr))
     const height = Math.max(1, Math.round(this.canvas.clientHeight * dpr))
     if (this.canvas.width === width && this.canvas.height === height) return
     this.canvas.width = width
     this.canvas.height = height
-    if (!this.running) this.render()
+    this.invalidate()
+  }
+
+  // Trades pixels for frame rate on GPUs that cannot keep up at full
+  // resolution, and takes them back when the budget allows.
+  adaptResolution(frameMs) {
+    this.frameTimeTotal += frameMs
+    this.frameTimeCount++
+    if (this.frameTimeCount < SAMPLE_FRAMES) return
+
+    const average = this.frameTimeTotal / this.frameTimeCount
+    this.frameTimeTotal = 0
+    this.frameTimeCount = 0
+
+    const previous = this.resolutionScale
+    if (average > SLOW_FRAME_MS) {
+      this.resolutionScale = Math.max(MIN_SCALE, previous - 0.15)
+    } else if (average < FAST_FRAME_MS) {
+      this.resolutionScale = Math.min(1, previous + 0.1)
+    }
+    if (this.resolutionScale !== previous) this.resize()
   }
 
   start() {
@@ -97,10 +143,19 @@ export class ShaderGradient {
     this.lastFrame = performance.now()
     const frame = (now) => {
       if (!this.running) return
-      const delta = Math.min((now - this.lastFrame) / 1000, 0.1)
+      const frameMs = now - this.lastFrame
+      const delta = Math.min(frameMs / 1000, 0.1)
       this.lastFrame = now
-      if (this.params.animate === 'on') this.time += delta
-      this.render()
+
+      // The animation layer runs before the draw and may mark the view dirty.
+      if (this.onFrame) this.onFrame(delta)
+
+      const animating = this.params.animate === 'on'
+      if (animating) this.time += delta
+      if (animating || this.needsRender) {
+        this.render()
+        this.adaptResolution(frameMs)
+      }
       this.frameHandle = requestAnimationFrame(frame)
     }
     this.frameHandle = requestAnimationFrame(frame)
@@ -109,6 +164,22 @@ export class ShaderGradient {
   stop() {
     this.running = false
     cancelAnimationFrame(this.frameHandle)
+  }
+
+  // Releases every GL object this instance created. The page owns its own
+  // listeners; this only undoes what the renderer allocated.
+  dispose() {
+    this.stop()
+    const gl = this.gl
+    for (const buffer of this.buffers) gl.deleteBuffer(buffer)
+    for (const mesh of new Set(Object.values(this.meshes))) gl.deleteVertexArray(mesh.vao)
+    // A program still bound to the context is only flagged for deletion.
+    gl.bindVertexArray(null)
+    gl.useProgram(null)
+    gl.deleteProgram(this.program)
+    this.buffers = []
+    this.meshes = {}
+    this.disposed = true
   }
 
   updateCamera() {
@@ -185,5 +256,6 @@ export class ShaderGradient {
       gl.drawElements(gl.TRIANGLES, mesh.triangleCount, gl.UNSIGNED_INT, 0)
     }
     gl.bindVertexArray(null)
+    this.needsRender = false
   }
 }

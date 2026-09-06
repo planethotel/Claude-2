@@ -15,7 +15,6 @@ html, body {
   background: #0b0b0f;
   color: var(--text);
   font: 13px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  overflow: hidden;
 }
 
 #stage {
@@ -181,3 +180,82 @@ select {
 @media (max-width: 720px) {
   #panel { top: auto; height: 52vh; width: auto; left: 16px; }
 }
+
+/* ---- Scroll rig page ---------------------------------------------------- */
+
+.scroll-page #stage { position: fixed; cursor: default; }
+
+#progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 3;
+  background: rgba(255, 255, 255, 0.1);
+}
+#progress span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.corner-link {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+  padding: 7px 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(18px);
+  color: var(--text);
+  font-size: 12px;
+  text-decoration: none;
+}
+.corner-link:hover { background: rgba(255, 255, 255, 0.12); }
+
+.scroll-page main {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+  padding: 0 24px;
+  margin: 0 auto;
+}
+.scroll-page section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  padding: 12vh 0;
+}
+.scroll-page h1 { margin: 0; font-size: clamp(28px, 5vw, 44px); line-height: 1.1; }
+.scroll-page h2 { margin: 0; font-size: clamp(20px, 3.5vw, 30px); line-height: 1.15; }
+.scroll-page p {
+  max-width: 46ch;
+  margin: 0;
+  padding: 14px 18px;
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(18px);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.scroll-page .hint { color: var(--muted); font-size: 13px; }
+.scroll-page a { color: var(--text); }
+.scroll-page code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.92em;
+}
+
+.panel-link { color: var(--text); font-size: 12px; }
+
+.scroll-page h1,
+.scroll-page h2 { text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6); }

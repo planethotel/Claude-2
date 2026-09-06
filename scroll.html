@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shader Gradient — Scroll Rig</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="scroll-page">
+  <canvas id="stage"></canvas>
+
+  <div id="fallback" hidden>
+    <h1>WebGL2 unavailable</h1>
+    <p></p>
+  </div>
+
+  <div id="progress"><span></span></div>
+
+  <a class="corner-link" href="index.html">Open the sandbox →</a>
+
+  <main>
+    <section>
+      <h1>Scroll drives the scene</h1>
+      <p>Four keyframes, one eased scroll position. Every parameter between them
+         is interpolated — camera angles, displacement, colours — while the mesh
+         type and lighting rig step at the midpoint, because there is no halfway
+         between a sphere and a plane.</p>
+      <p class="hint">Keep scrolling.</p>
+    </section>
+
+    <section>
+      <h2>One owner per property</h2>
+      <p>The rig owns every parameter it names, for the whole page. Nothing else
+         writes them, so there is no second animator to fight and no state to
+         reconcile — the classic failure mode when a scroll library and a UI
+         both reach for the same camera.</p>
+    </section>
+
+    <section>
+      <h2>Draw only what is needed</h2>
+      <p>The renderer marks itself dirty when a parameter changes and skips the
+         draw when nothing did. It also measures its own frame time and trades
+         resolution for frame rate when the GPU falls behind, taking the pixels
+         back when the budget allows.</p>
+    </section>
+
+    <section>
+      <h2>Then clean up after yourself</h2>
+      <p>Listeners are registered against one <code>AbortController</code> and
+         the renderer releases its buffers, vertex arrays and program on
+         <code>pagehide</code>. Setup and teardown are symmetric.</p>
+      <p class="hint"><a href="index.html">Open the sandbox to drive it by hand →</a></p>
+    </section>
+  </main>
+
+  <script type="module" src="src/scroll.js"></script>
+</body>
+</html>

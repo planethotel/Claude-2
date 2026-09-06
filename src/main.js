@@ -2,6 +2,11 @@ import { ShaderGradient } from './gradient.js'
 import { DEFAULTS, PRESETS, paramsFromQuery } from './params.js'
 import { createControls, createPresetButtons, randomParams, shareUrl } from './ui.js'
 
+// Every listener on this page hangs off one controller, so teardown is a
+// single abort rather than a list to keep in sync.
+const listeners = new AbortController()
+const { signal } = listeners
+
 const canvas = document.querySelector('#stage')
 const panel = document.querySelector('#panel')
 const status = document.querySelector('#status')
@@ -19,6 +24,9 @@ try {
   panel.hidden = true
   throw error
 }
+
+// Debugging handle: inspect or drive the renderer from the console.
+window.shaderGradient = gradient
 
 const controls = createControls({
   root: document.querySelector('#controls'),
@@ -108,14 +116,14 @@ window.addEventListener('keydown', (event) => {
     applyParams({ animate: params.animate === 'on' ? 'off' : 'on' })
     flash(params.animate === 'on' ? 'Playing' : 'Paused')
   }
-})
+}, { signal })
 
 // Drag to orbit, wheel to dolly — driving the same camera params as the sliders.
 let dragging = null
 canvas.addEventListener('pointerdown', (event) => {
   dragging = { x: event.clientX, y: event.clientY }
   canvas.setPointerCapture(event.pointerId)
-})
+}, { signal })
 canvas.addEventListener('pointermove', (event) => {
   if (!dragging) return
   const dx = event.clientX - dragging.x
@@ -125,18 +133,18 @@ canvas.addEventListener('pointermove', (event) => {
     cAzimuthAngle: (params.cAzimuthAngle - dx * 0.3 + 360) % 360,
     cPolarAngle: Math.min(179, Math.max(1, params.cPolarAngle - dy * 0.3)),
   })
-})
+}, { signal })
 const endDrag = () => { dragging = null }
-canvas.addEventListener('pointerup', endDrag)
-canvas.addEventListener('pointercancel', endDrag)
+canvas.addEventListener('pointerup', endDrag, { signal })
+canvas.addEventListener('pointercancel', endDrag, { signal })
 
 canvas.addEventListener('wheel', (event) => {
   event.preventDefault()
   const distance = params.cDistance + event.deltaY * 0.004
   applyParams({ cDistance: Math.min(20, Math.max(1, distance)) })
-}, { passive: false })
+}, { passive: false, signal })
 
-window.addEventListener('resize', () => gradient.resize())
+window.addEventListener('resize', () => gradient.resize(), { signal })
 gradient.resize()
 gradient.start()
 
@@ -144,4 +152,10 @@ gradient.start()
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) gradient.stop()
   else gradient.start()
-})
+}, { signal })
+
+// Teardown mirrors setup: drop the listeners, release the GL objects.
+window.addEventListener('pagehide', () => {
+  listeners.abort()
+  gradient.dispose()
+}, { signal })

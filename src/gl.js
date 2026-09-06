@@ -101,3 +101,12 @@ export function hexToRgb(hex) {
   const value = parseInt(hex.replace('#', ''), 16)
   return [(value >> 16 & 255) / 255, (value >> 8 & 255) / 255, (value & 255) / 255]
 }
+
+// Straight-line blend in sRGB. Good enough for interpolating between two
+// authored colours, and it keeps a hex string as the single representation.
+export function mixHex(from, to, t) {
+  const a = hexToRgb(from)
+  const b = hexToRgb(to)
+  const channel = (i) => Math.round((a[i] + (b[i] - a[i]) * t) * 255).toString(16).padStart(2, '0')
+  return `#${channel(0)}${channel(1)}${channel(2)}`
+}
