@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LUMEN — atelier numérique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="showcase.css">
+</head>
+<body>
+  <canvas id="mesh" aria-hidden="true"></canvas>
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div id="vignette" aria-hidden="true"></div>
+  <div id="grain" aria-hidden="true"></div>
+  <div id="cursor" aria-hidden="true"></div>
+
+  <div id="fallback" hidden>
+    <h1>WebGL2 indisponible</h1>
+    <p></p>
+  </div>
+
+  <header class="topbar">
+    <a class="wordmark" href="#top">LUMEN<span>·</span></a>
+    <nav>
+      <a href="#lumiere">Lumière</a>
+      <a href="#mouvement">Mouvement</a>
+      <a href="#matiere">Matière</a>
+      <a class="ghost magnetic" href="index.html">Le bac à sable</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="top" class="hero" data-scene="chrome">
+      <p class="eyebrow reveal">Atelier numérique · Paris</p>
+      <h1 class="display split">Nous sculptons la lumière</h1>
+      <p class="lede reveal">Trois siècles de peinture nous ont appris une chose : ce n'est
+         jamais l'objet qui émeut, c'est la lumière qui le frappe. Nous fabriquons des
+         sites qui s'en souviennent.</p>
+      <div class="actions reveal">
+        <a class="button magnetic" href="#lumiere">Voir la démarche</a>
+        <a class="link magnetic" href="#matiere">Le rendu temps réel →</a>
+      </div>
+      <div class="scroll-cue reveal"><span></span>défiler</div>
+    </section>
+
+    <section id="lumiere" class="palettes" data-scene="palette">
+      <div class="section-head">
+        <p class="eyebrow reveal">01 — Lumière</p>
+        <h2 class="display split">Trois lumières volées aux peintres</h2>
+        <p class="lede reveal">Chaque palette ci-dessous est prélevée sur un tableau et
+           rejouée en temps réel par notre moteur. Faites défiler : la matière change
+           de lumière avec vous.</p>
+      </div>
+
+      <article class="palette reveal" data-palette="cloister">
+        <div class="swatches"><i style="--c:#221a12"></i><i style="--c:#c9a36a"></i><i style="--c:#e8e2d0"></i></div>
+        <h3>Le cloître</h3>
+        <p>Une ogive, une cour, et le jour qui entre par une seule ouverture.
+           L'ombre chaude tient les trois quarts du cadre — c'est elle qui rend
+           le blanc éclatant.</p>
+      </article>
+
+      <article class="palette reveal" data-palette="sail">
+        <div class="swatches"><i style="--c:#f4f1e6"></i><i style="--c:#8fb0c9"></i><i style="--c:#6c8f4a"></i></div>
+        <h3>La voile</h3>
+        <p>Plein soleil sur une toile blanche : les ombres virent au bleu, le vert
+           du jardin remonte par réflexion. Aucune couleur n'est pure, tout est
+           contaminé par le voisinage.</p>
+      </article>
+
+      <article class="palette reveal" data-palette="empyrean">
+        <div class="swatches"><i style="--c:#2f6fa8"></i><i style="--c:#d1495b"></i><i style="--c:#f2d3b0"></i></div>
+        <h3>L'empyrée</h3>
+        <p>Azur profond, drapé carmin, carnations chaudes. La composition monte :
+           le regard part du sol et finit dans le ciel, poussé par la seule
+           couleur.</p>
+      </article>
+    </section>
+
+    <section id="mouvement" class="field-section" data-scene="field">
+      <div class="section-head">
+        <p class="eyebrow reveal">02 — Mouvement</p>
+        <h2 class="display split">Soixante-douze mille points</h2>
+        <p class="lede reveal">Une nappe qui se replie en sphère au fil du défilement.
+           Passez le curseur dessus : la foule s'écarte. Tout se joue dans le
+           vertex shader — rien n'est renvoyé au processeur.</p>
+      </div>
+      <ul class="stats">
+        <li class="reveal"><strong data-count="72000">72 000</strong><span>points dessinés par image</span></li>
+        <li class="reveal"><strong data-count="1">1</strong><span>appel de dessin</span></li>
+        <li class="reveal"><strong data-count="0">0</strong><span>dépendance</span></li>
+      </ul>
+    </section>
+
+    <section id="matiere" class="material" data-scene="chrome-close">
+      <div class="section-head">
+        <p class="eyebrow reveal">03 — Matière</p>
+        <h2 class="display split">Un chrome qui reflète une pièce qui n'existe pas</h2>
+        <p class="lede reveal">Le studio — ciel, sol, ligne d'horizon, trois boîtes à
+           lumière — est fabriqué au démarrage dans une cubemap. La rugosité choisit
+           le niveau de flou, le Fresnel allume les bords. Aucune image n'est chargée.</p>
+      </div>
+      <div class="specs">
+        <div class="spec reveal"><span>Réflexion</span><b>Cubemap procédurale</b></div>
+        <div class="spec reveal"><span>Rugosité</span><b>Niveaux de mip</b></div>
+        <div class="spec reveal"><span>Poids</span><b>0 ko d'images</b></div>
+        <div class="spec reveal"><span>Rendu</span><b>WebGL2 brut</b></div>
+      </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>lumière · matière · mouvement ·</span>
+        <span>lumière · matière · mouvement ·</span>
+        <span>lumière · matière · mouvement ·</span>
+      </div>
+    </div>
+
+    <section id="contact" class="closing" data-scene="chrome">
+      <h2 class="display split">On commence par quoi ?</h2>
+      <p class="lede reveal">Une page, une identité, une expérience entière. Dites-nous ce
+         que vous voulez qu'on éclaire.</p>
+      <a class="button large magnetic" href="index.html">Ouvrir le bac à sable</a>
+      <footer class="reveal">
+        <span>LUMEN — démonstration technique</span>
+        <span>Rendu maison, sans bibliothèque</span>
+      </footer>
+    </section>
+  </main>
+
+  <script type="module" src="src/showcase.js"></script>
+</body>
+</html>

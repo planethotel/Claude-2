@@ -26,6 +26,27 @@ environment generated at startup — no image assets, no library.
 | --- | --- |
 | ![Chrome sphere](docs/chrome.jpg) | ![Liquid metal plane](docs/liquid.jpg) |
 
+## LUMEN — the showcase
+
+`showcase.html` is the piece that puts everything together: a fictional studio
+site where the two renderers are the page. The hero is liquid chrome, the
+"Lumière" section relights the mesh with palettes lifted from three paintings
+(a candlelit cloister, sunlit sailcloth, a renaissance sky), "Mouvement" hands
+the screen to a 72 000-point field that folds from a swell into a sphere and
+parts under the cursor, and "Matière" comes back to chrome up close.
+
+![LUMEN hero](docs/lumen-hero.jpg)
+
+| Painterly palette | Particle field |
+| --- | --- |
+| ![Cloister palette](docs/lumen-palette.jpg) | ![Particle field](docs/lumen-field.jpg) |
+
+Everything on it is hand-rolled: split-line headings, magnetic buttons, a
+cursor light, film grain, marquee, scroll-linked scene changes with eased
+parameter blending, counters, and reveals on intersection. No animation
+library, no 3D library, no images — the two Google fonts are the only external
+request.
+
 ## Run it
 
 ES modules need a real origin, so open it through any static server:
@@ -145,6 +166,10 @@ src/shaders.js    GLSL sources
 src/geometry.js   plane, sphere and wireframe index generation
 src/gl.js         program compilation, 4×4 matrix helpers, colour mixing
 src/envmap.js     procedural studio cubemap for metal reflections
+src/particles.js  72k-point field: swell↔sphere morph, cursor repulsion
+showcase.html     LUMEN — the full showcase page
+showcase.css      its design system
+src/showcase.js   scene sequencing, entrances, cursor, magnetics
 src/params.js     parameter schema, defaults, presets, query-string round trip
 src/ui.js         control panel construction
 ```

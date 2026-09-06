@@ -1,7 +1,7 @@
 // GLSL ES 3.00 sources for the gradient mesh.
 
 // Simplex noise by Ashima Arts / Stefan Gustavson (MIT), the usual webgl-noise port.
-const SIMPLEX_3D = /* glsl */ `
+export const SIMPLEX_3D = /* glsl */ `
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 permute(vec4 x) { return mod289(((x * 34.0) + 1.0) * x); }
