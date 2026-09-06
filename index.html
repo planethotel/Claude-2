@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shader Gradient Exploration</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="stage"></canvas>
+
+  <div id="fallback" hidden>
+    <h1>WebGL2 unavailable</h1>
+    <p></p>
+  </div>
+
+  <div id="status" role="status" aria-live="polite"></div>
+
+  <button id="toggle-panel" aria-expanded="true" aria-controls="panel">Hide controls</button>
+
+  <aside id="panel">
+    <header>
+      <h1>Shader Gradient</h1>
+      <p>Noise-displaced mesh gradients in raw WebGL2. Drag to orbit, scroll to dolly,
+         <kbd>space</kbd> to pause, <kbd>h</kbd> to hide this panel.</p>
+    </header>
+
+    <div id="presets" class="presets"></div>
+
+    <div class="actions">
+      <button id="randomize">Randomize</button>
+      <button id="share">Copy link</button>
+      <button id="snapshot">Save PNG</button>
+      <button id="reset">Reset</button>
+    </div>
+
+    <div id="controls"></div>
+  </aside>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
