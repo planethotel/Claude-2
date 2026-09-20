@@ -31,6 +31,7 @@ bool dauphin_scene_accueil_on_event(void* contexte, SceneManagerEvent evenement)
 
     if(evenement.type == SceneManagerEventTypeTick) {
         dauphin_pouls(app);
+        dauphin_verifier_attente(app);
         return true;
     }
 

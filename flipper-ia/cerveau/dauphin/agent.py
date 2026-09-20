@@ -27,6 +27,19 @@ except ImportError:  # le pont peut tourner en mode « hors ligne » sans le SDK
 from .connaisseur import Connaisseur, Inventaire
 
 MODELE_DEFAUT = "claude-opus-5"
+#: Effort reduit : les questions du companion sont courtes, la reactivite
+#: compte plus que d'aller chercher le fond du raisonnement a chaque fois.
+EFFORT_DEFAUT = "medium"
+#: Delai max par appel reseau (s). Sans ca, un reseau qui pend bloque le
+#: Flipper jusqu'au timeout par defaut du SDK (10 minutes) avant de signaler
+#: quoi que ce soit -- ce qui ressemble a un plantage.
+DELAI_APPEL_S = 45.0
+#: Nombre maximum de tours d'outils par reponse. Le modele est cense finir en
+#: appelant "terminer", mais rien ne le garantit : sans plafond, un modele qui
+#: enchaine les appels d'outils sans jamais conclure boucle indefiniment --
+#: chaque tour est un vrai aller-retour reseau, donc "indefiniment" se voit
+#: comme un chargement infini sur le Flipper.
+TOURS_MAX = 6
 
 CONSIGNE = """\
 Tu es l'esprit d'un dauphin qui vit dans un Flipper Zero, un petit outil
@@ -211,7 +224,11 @@ class Agent:
         self._client = None
         if anthropic is not None:
             # Le constructeur sans argument lit ANTHROPIC_API_KEY ou le profil `ant`.
-            self._client = anthropic.Anthropic(api_key=cle_api) if cle_api else anthropic.Anthropic()
+            client = anthropic.Anthropic(api_key=cle_api) if cle_api else anthropic.Anthropic()
+            # Delai borne : un appel qui pend doit echouer en DELAI_APPEL_S,
+            # pas au bout des 10 minutes par defaut du SDK. L'exception remonte
+            # au pont, qui previent le Flipper au lieu de le laisser attendre.
+            self._client = client.with_options(timeout=DELAI_APPEL_S)
 
     @property
     def disponible(self) -> bool:
@@ -246,17 +263,18 @@ class Agent:
         messages: list[dict] = [{"role": "user", "content": ouverture}]
         compteur = [0]
         propositions_annoncees = False
+        rien_emis = True
 
-        # Boucle d'outils : on redemande tant que le modele appelle des outils.
-        while True:
-            emissions_du_tour: list[Emission] = []
-            blocs_reponse: list = []
-
+        # Boucle d'outils : on redemande tant que le modele appelle des outils,
+        # mais jamais plus de TOURS_MAX fois -- voir le commentaire sur la
+        # constante pour pourquoi un plafond est indispensable ici.
+        for _tour in range(TOURS_MAX):
             with self._client.messages.stream(
                 model=self.modele,
                 max_tokens=8000,
                 system=CONSIGNE,
                 thinking={"type": "adaptive"},
+                output_config={"effort": EFFORT_DEFAUT},
                 tools=OUTILS,
                 messages=messages,
             ) as flux:
@@ -265,7 +283,19 @@ class Agent:
             blocs_reponse = reponse.content
             appels = [b for b in blocs_reponse if b.type == "tool_use"]
 
-            if appels and not propositions_annoncees:
+            if not appels:
+                # Le modele a repondu en texte libre sans passer par un outil --
+                # ca arrive (tool_choice reste "auto"). Sans ce filet, la
+                # reponse serait purement et simplement perdue : rien
+                # n'atteindrait jamais le Flipper, qui resterait bloque sur
+                # "je reflechis" pour toujours.
+                texte = "".join(b.text for b in blocs_reponse if b.type == "text").strip()
+                if texte:
+                    yield Emission("DIRE", {"texte": texte})
+                    rien_emis = False
+                break
+
+            if not propositions_annoncees:
                 # Compte les propositions de CE tour pour l'annonce PROPOSITIONS.
                 nb = sum(1 for b in appels if b.name == "proposer")
                 if nb:
@@ -274,6 +304,7 @@ class Agent:
 
             fini = False
             resultats = []
+            emissions_du_tour: list[Emission] = []
             for appel in appels:
                 if appel.name == "terminer":
                     fini = True
@@ -288,13 +319,31 @@ class Agent:
                     {"type": "tool_result", "tool_use_id": appel.id, "content": "recu"}
                 )
 
+            if emissions_du_tour:
+                rien_emis = False
             yield from emissions_du_tour
 
-            if not appels or fini or reponse.stop_reason == "end_turn":
+            if fini or reponse.stop_reason == "end_turn":
                 break
 
             messages.append({"role": "assistant", "content": blocs_reponse})
             messages.append({"role": "user", "content": resultats})
+        # Si la boucle s'epuise sans "break" (TOURS_MAX atteint sans que le
+        # modele conclue), rien_emis dit deja si on a au moins quelque chose
+        # d'utile a montrer -- pas besoin de traiter ce cas a part.
+
+        if rien_emis:
+            # Filet de securite final : quoi qu'il arrive, le Flipper doit
+            # recevoir quelque chose plutot que d'attendre indefiniment.
+            yield Emission("HUMEUR", {"etat": "inquiet"})
+            yield Emission(
+                "DIRE",
+                {
+                    "texte": "Je n'ai pas trouve de reponse claire, desole. "
+                    "Essaie de reformuler ?",
+                    "humeur": "inquiet",
+                },
+            )
 
     # ----------------------------------------------------------------------
     # Mode de repli : pas de reseau, pas de cle. Le connaisseur seul.

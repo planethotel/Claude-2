@@ -32,6 +32,10 @@
 #define DAUPHIN_PROPOSITIONS_MAX 8
 /** Taille du tampon de saisie libre. */
 #define DAUPHIN_SAISIE_MAX 120
+/** Delai maximum d'attente d'une reponse du cerveau avant abandon (ms).
+ * Sans ca, une question sans reponse (cerveau eteint, reseau coupe, bug cote
+ * cerveau) laisse la mascotte sur "Je reflechis..." pour toujours. */
+#define DAUPHIN_ATTENTE_MAX_MS 30000
 
 typedef struct DauphinIa DauphinIa;
 
@@ -120,12 +124,29 @@ struct DauphinIa {
      * repond toujours pas au bout de ce premier delai. */
     bool premier_pouls_a_faire;
 
+    /** Une question ou un inventaire attend une reponse du cerveau. */
+    bool en_attente_reponse;
+    /** Horodatage de l'envoi qui attend sa reponse. */
+    uint32_t attente_depuis;
+
     /** Tampon de decodage reutilise (trop gros pour la pile). */
     ProtoTrame trame;
 };
 
 /** Traite une trame recue du cerveau. Appele sur le fil de la GUI. */
 void dauphin_traiter_trame(DauphinIa* app, const ProtoTrame* trame);
+
+/**
+ * @brief Signale qu'une reponse du cerveau est attendue a partir de maintenant.
+ * A appeler juste apres avoir envoye une question ou un inventaire.
+ */
+void dauphin_armer_attente(DauphinIa* app);
+
+/**
+ * @brief A appeler a chaque tick (pas besoin d'attendre le pouls des 10 s).
+ * Abandonne et previent l'utilisateur si DAUPHIN_ATTENTE_MAX_MS est depasse.
+ */
+void dauphin_verifier_attente(DauphinIa* app);
 
 /** Envoie l'inventaire courant au cerveau (re-scan complet). */
 void dauphin_envoyer_inventaire(DauphinIa* app);

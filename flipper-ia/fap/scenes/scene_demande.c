@@ -33,7 +33,15 @@ bool dauphin_scene_demande_on_event(void* contexte, SceneManagerEvent evenement)
         furi_string_free(ligne);
 
         vue_mascotte_set_humeur(app->mascotte, HumeurReflechit);
-        vue_mascotte_dire(app->mascotte, "Je reflechis...");
+        if(lien_get_etat(app->lien) == LienEtatRelie) {
+            vue_mascotte_dire(app->mascotte, "Je reflechis...");
+        } else {
+            /* Autant le dire tout de suite plutot que d'attendre pour rien :
+             * sans cerveau relie, personne ne repondra jamais. */
+            vue_mascotte_dire(
+                app->mascotte, "Le cerveau ne semble pas branche. J'essaie quand meme...");
+        }
+        dauphin_armer_attente(app);
     }
 
     scene_manager_search_and_switch_to_previous_scene(app->scene_manager, DauphinSceneAccueil);

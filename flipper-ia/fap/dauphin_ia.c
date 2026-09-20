@@ -70,6 +70,30 @@ void dauphin_envoyer_inventaire(DauphinIa* app) {
     }
 
     vue_mascotte_dire(app->mascotte, "Envoye. Je laisse le cerveau digerer.");
+    dauphin_armer_attente(app);
+}
+
+void dauphin_armer_attente(DauphinIa* app) {
+    furi_assert(app);
+    app->en_attente_reponse = true;
+    app->attente_depuis = furi_get_tick();
+}
+
+void dauphin_verifier_attente(DauphinIa* app) {
+    furi_assert(app);
+    if(!app->en_attente_reponse) return;
+
+    uint32_t maintenant = furi_get_tick();
+    if(maintenant - app->attente_depuis < furi_ms_to_ticks(DAUPHIN_ATTENTE_MAX_MS)) return;
+
+    /* Le cerveau n'a rien renvoye a temps : mieux vaut le dire que de laisser
+     * la mascotte sur "je reflechis" indefiniment. */
+    app->en_attente_reponse = false;
+    vue_mascotte_set_humeur(app->mascotte, HumeurInquiet);
+    vue_mascotte_dire(
+        app->mascotte,
+        "Toujours pas de reponse. Verifie que le cerveau tourne, ou essaie "
+        "Identifier seul dans le menu.");
 }
 
 void dauphin_pouls(DauphinIa* app) {
@@ -173,6 +197,18 @@ static void dauphin_recevoir_proposition(DauphinIa* app, const ProtoTrame* trame
 void dauphin_traiter_trame(DauphinIa* app, const ProtoTrame* trame) {
     furi_assert(app);
     furi_assert(trame);
+
+    /* Le cerveau donne signe de vie : plus la peine d'attendre. */
+    switch(trame->type) {
+    case ProtoTypeDire:
+    case ProtoTypeFiche:
+    case ProtoTypeErreur:
+    case ProtoTypePropositions:
+        app->en_attente_reponse = false;
+        break;
+    default:
+        break;
+    }
 
     switch(trame->type) {
     case ProtoTypeHumeur:
