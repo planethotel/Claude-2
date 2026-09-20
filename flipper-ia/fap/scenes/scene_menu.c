@@ -4,6 +4,7 @@ typedef enum {
     MenuAnalyser,
     MenuDemander,
     MenuPropositions,
+    MenuAutonome,
     MenuReglages,
 } MenuEntree;
 
@@ -25,6 +26,8 @@ void dauphin_scene_menu_on_enter(void* contexte) {
     snprintf(etiquette, sizeof(etiquette), "Propositions (%u)", (unsigned)app->propositions_nb);
     submenu_add_item(menu, etiquette, MenuPropositions, dauphin_scene_menu_rappel, app);
 
+    submenu_add_item(
+        menu, "Identifier seul (sans PC)", MenuAutonome, dauphin_scene_menu_rappel, app);
     submenu_add_item(menu, "Reglages du lien", MenuReglages, dauphin_scene_menu_rappel, app);
 
     view_dispatcher_switch_to_view(app->view_dispatcher, VueSubmenuId);
@@ -46,6 +49,9 @@ bool dauphin_scene_menu_on_event(void* contexte, SceneManagerEvent evenement) {
         if(app->propositions_nb > 0) {
             scene_manager_next_scene(app->scene_manager, DauphinScenePropositions);
         }
+        return true;
+    case MenuAutonome:
+        scene_manager_next_scene(app->scene_manager, DauphinSceneAutonome);
         return true;
     case MenuReglages:
         scene_manager_next_scene(app->scene_manager, DauphinSceneReglages);

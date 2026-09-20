@@ -79,10 +79,17 @@ void dauphin_pouls(DauphinIa* app) {
     if(maintenant - app->dernier_pouls < furi_ms_to_ticks(DAUPHIN_POULS_MS)) return;
     app->dernier_pouls = maintenant;
 
+    /* Ce POULS passe la barriere de temps ci-dessus : c'est un vrai
+     * declenchement (le tout premier survient ~10 s apres le demarrage, pas
+     * avant). On s'en sert seulement pour l'astuce ci-dessous. */
+    bool premier_pouls = app->premier_pouls_a_faire;
+    app->premier_pouls_a_faire = false;
+
     uint8_t batterie = furi_hal_power_get_pct();
 
+    LienEtat etat_lien = lien_get_etat(app->lien);
     const char* etat = "hors ligne";
-    switch(lien_get_etat(app->lien)) {
+    switch(etat_lien) {
     case LienEtatOuvert:
         etat = "en attente";
         break;
@@ -93,6 +100,14 @@ void dauphin_pouls(DauphinIa* app) {
         break;
     }
     vue_mascotte_set_etat(app->mascotte, etat, batterie);
+
+    /* Toujours pas de cerveau au bout du premier pouls (~10 s) : on montre
+     * une fois le menu qui marche sans lui. */
+    if(premier_pouls && etat_lien != LienEtatRelie) {
+        vue_mascotte_dire(
+            app->mascotte,
+            "Pas de cerveau branche. Menu -> Identifier seul, ou branche l'ordinateur.");
+    }
 
     char texte[8];
     snprintf(texte, sizeof(texte), "%u", (unsigned)batterie);
@@ -264,6 +279,7 @@ static void dauphin_evenement_tick(void* contexte) {
 static DauphinIa* dauphin_alloc(void) {
     DauphinIa* app = malloc(sizeof(DauphinIa));
     memset(app, 0, sizeof(DauphinIa));
+    app->premier_pouls_a_faire = true;
 
     app->gui = furi_record_open(RECORD_GUI);
     app->storage = furi_record_open(RECORD_STORAGE);

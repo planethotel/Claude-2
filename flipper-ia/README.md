@@ -35,6 +35,12 @@ peau et ses humeurs, réagit en direct.
 - **Proposer et exécuter** : ouvrir la bonne application sur le bon fichier,
   écrire une note, jouer une notification, refaire un inventaire.
 - **Répondre à une demande libre** : tu tapes une question, elle répond.
+- **Identifier sans ordinateur** : menu → *Identifier seul (sans PC)*. Un petit
+  dictionnaire de protocoles est embarqué directement dans le FAP (Mifare,
+  EM4100, Princeton, NEC…), pour que le Flipper te dise quelque chose même
+  débranché. Moins riche que le cerveau (pas de conversation, pas de
+  proposition générée), mais toujours disponible. Si le cerveau ne répond pas
+  dans les 10 premières secondes, la mascotte le signale d'elle-même.
 
 ## Le garde-fou (important)
 
@@ -86,7 +92,7 @@ flipper-ia/
 ├── docs/PROTOCOLE.md      Le protocole « Écaille », trame par trame
 ├── fap/                   Le FAP (C) — le corps
 │   ├── lien/              Port série + encodage du protocole
-│   ├── contexte/          Scanner d'inventaire (lit les en-têtes Flipper Format)
+│   ├── contexte/          Scanner d'inventaire + dictionnaire embarqué (mode seul)
 │   ├── views/             La mascotte animée
 │   ├── scenes/            Accueil, menu, question, propositions, confirmation…
 │   ├── actions/           L'exécuteur (ouvre une app, écrit une note…)

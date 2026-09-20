@@ -115,6 +115,10 @@ struct DauphinIa {
 
     /** Horodatage du dernier POULS envoye. */
     uint32_t dernier_pouls;
+    /** Le tout premier appel a dauphin_pouls() n'a pas encore eu lieu.
+     * Sert a montrer l'astuce "mode seul" une fois, si le cerveau ne
+     * repond toujours pas au bout de ce premier delai. */
+    bool premier_pouls_a_faire;
 
     /** Tampon de decodage reutilise (trop gros pour la pile). */
     ProtoTrame trame;
