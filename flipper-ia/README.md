@@ -101,11 +101,20 @@ flipper-ia/
 
 ## État et limites
 
-- Développé et vérifié contre le firmware **Momentum** (commit `d3f89df`,
-  août 2026). Chaque appel d'API du FAP a été contrôlé sur les sources du
-  firmware. **Le binaire final doit être compilé par toi avec `ufbt`** : le
-  téléchargement du SDK ARM n'était pas possible dans l'environnement de
-  développement, donc la compilation sur appareil reste à lancer de ton côté.
+- Développé et **compilé avec succès** contre les sources complètes du
+  firmware **Momentum** (commit `d3f89df`, août 2026) : le FAP compile sans
+  avertissement sous les flags stricts du firmware (`-Wall -Wextra -Werror`),
+  s'édite en un `.fap` ARM valide, et passe le contrôle de compatibilité SDK du
+  firmware (« API version 87.1 is up to date »). Deux dépassements de tampon
+  potentiels détectés par le compilateur pendant cette vérification ont été
+  corrigés (`vue_mascotte.c`, `dauphin_ia.c` — des tampons de conversion
+  `size_t → texte` légèrement sous-dimensionnés).
+- Compile aussi normalement avec `ufbt` (le SDK précompilé officiel) : voir
+  « Démarrage rapide » ci-dessus. La vérification ci-dessus a été faite avec
+  les sources complètes du firmware plutôt qu'avec `ufbt`, car le
+  téléchargement du SDK précompilé n'était pas possible depuis l'environnement
+  de développement — cela ne change rien au résultat, seulement au chemin pour
+  y arriver.
 - Le cerveau est testé : `cd cerveau && python -m pytest` (18 tests).
 - La mascotte est un dessin original, généré par code (aucune image tierce).
 

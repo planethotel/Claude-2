@@ -164,9 +164,13 @@ static void vue_mascotte_dessiner(Canvas* canvas, void* modele) {
         canvas_draw_str(canvas, BULLE_X + BULLE_L - 8, BULLE_Y + BULLE_H - 2, "v");
     }
 
-    /* Pastille du nombre de propositions en attente. */
+    /* Pastille du nombre de propositions en attente.
+     * DAUPHIN_PROPOSITIONS_MAX borne la vraie valeur a un seul chiffre, mais le
+     * tampon est dimensionne pour n'importe quel "unsigned" (10 chiffres + le
+     * caractere nul) : GCC ne peut pas prouver la borne reelle depuis le type
+     * size_t et refuse sinon de compiler (-Werror=format-truncation). */
     if(m->propositions > 0) {
-        char pastille[8];
+        char pastille[12];
         snprintf(pastille, sizeof(pastille), "%u", (unsigned)m->propositions);
         canvas_draw_disc(canvas, BULLE_X + BULLE_L - 6, BULLE_Y + 6, 6);
         canvas_set_color(canvas, ColorWhite);

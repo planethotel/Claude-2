@@ -48,7 +48,10 @@ void dauphin_envoyer_inventaire(DauphinIa* app) {
 
     size_t nb = inventaire_scanner(app->inventaire);
 
-    char compte[8];
+    /* nb est en realite borne par INVENTAIRE_MAX, mais son type (size_t) ne le
+     * prouve pas au compilateur : le tampon est dimensionne pour un "unsigned"
+     * quelconque (10 chiffres + le caractere nul). */
+    char compte[12];
     snprintf(compte, sizeof(compte), "%u", (unsigned)nb);
     dauphin_envoyer(app, proto_construire("INVENTAIRE", "n", compte, NULL));
 
