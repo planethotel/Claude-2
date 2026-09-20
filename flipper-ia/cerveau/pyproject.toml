@@ -1,0 +1,12 @@
+[project]
+name = "dauphin-cerveau"
+version = "0.1.0"
+description = "Le cerveau du compagnon IA pour Flipper Zero (Momentum)."
+requires-python = ">=3.10"
+dependencies = ["anthropic>=0.40", "pyserial>=3.5"]
+
+[project.scripts]
+dauphin-cerveau = "dauphin.__main__:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

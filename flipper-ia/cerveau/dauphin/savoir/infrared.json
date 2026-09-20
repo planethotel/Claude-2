@@ -1,0 +1,23 @@
+{
+  "_commentaire": "Cle = valeur du champ 'protocol' d'un fichier .ir, ou 'Raw'.",
+  "NEC": {
+    "famille": "infrarouge",
+    "resume": "Le protocole IR le plus courant : televiseurs, box, climatiseurs asiatiques.",
+    "usages_legitimes": "Recreer une telecommande universelle pour tes appareils."
+  },
+  "RC5": {
+    "famille": "infrarouge",
+    "resume": "Ancien protocole Philips, encore present sur du materiel europeen.",
+    "usages_legitimes": "Telecommande universelle."
+  },
+  "Samsung32": {
+    "famille": "infrarouge",
+    "resume": "Variante utilisee par les televiseurs Samsung.",
+    "usages_legitimes": "Telecommande universelle."
+  },
+  "Raw": {
+    "famille": "infrarouge",
+    "resume": "Capture brute d'une trame IR non reconnue.",
+    "usages_legitimes": "Rejouer un bouton precis d'une de tes telecommandes."
+  }
+}
