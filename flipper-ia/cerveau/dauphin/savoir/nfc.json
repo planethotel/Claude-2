@@ -1,0 +1,28 @@
+{
+  "_commentaire": "Cle = valeur du champ 'Device type' d'un fichier .nfc. Fiches d'identification, usage grand public.",
+  "Mifare Classic": {
+    "famille": "carte 13,56 MHz",
+    "resume": "Carte NXP tres repandue : badges de bureau, transports, hotels. Memoire en secteurs proteges par des cles.",
+    "usages_legitimes": "Retrouver a quoi sert une de tes propres cartes, verifier son type et sa taille."
+  },
+  "Mifare DESFire": {
+    "famille": "carte 13,56 MHz",
+    "resume": "Carte plus moderne et mieux protegee que la Classic, courante dans les transports recents.",
+    "usages_legitimes": "Identification et catalogage de tes cartes."
+  },
+  "NTAG/Ultralight": {
+    "famille": "etiquette 13,56 MHz",
+    "resume": "Petites etiquettes bon marche (affiches, jouets, cartes de visite NFC). Souvent lisibles librement.",
+    "usages_legitimes": "Lire une etiquette, savoir ce qu'elle contient, la reutiliser pour tes propres projets."
+  },
+  "FeliCa": {
+    "famille": "carte 13,56 MHz",
+    "resume": "Norme Sony, tres presente au Japon (transports, paiement).",
+    "usages_legitimes": "Identifier une carte FeliCa."
+  },
+  "SLIX": {
+    "famille": "etiquette 13,56 MHz (ISO15693)",
+    "resume": "Etiquette longue portee, utilisee en bibliotheque et en logistique.",
+    "usages_legitimes": "Inventaire de tes propres etiquettes."
+  }
+}

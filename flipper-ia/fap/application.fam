@@ -1,0 +1,19 @@
+App(
+    appid="dauphin_ia",
+    name="IA Dauphin",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="dauphin_ia_app",
+    stack_size=4 * 1024,
+    fap_category="Tools",
+    fap_icon="images/icone_10px.png",
+    fap_icon_assets="images",
+    fap_author="projet flipper-ia",
+    fap_version="0.1",
+    fap_description="Compagnon vivant : inventorie, explique et propose. Le raisonnement tourne sur le cerveau relie en serie.",
+    requires=[
+        "gui",
+        "storage",
+        "notification",
+        "loader",
+    ],
+)

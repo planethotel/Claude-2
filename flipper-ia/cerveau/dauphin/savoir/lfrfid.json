@@ -1,0 +1,23 @@
+{
+  "_commentaire": "Cle = valeur du champ 'Key type' d'un fichier .rfid (125 kHz).",
+  "EM4100": {
+    "famille": "badge 125 kHz",
+    "resume": "Le badge bas de gamme le plus courant : interphones, parkings, salles de sport. Identifiant fixe, pas de chiffrement.",
+    "usages_legitimes": "Identifier tes propres badges, en garder une copie de secours."
+  },
+  "HIDProx": {
+    "famille": "badge 125 kHz",
+    "resume": "Format HID Prox, tres present dans les immeubles de bureaux nord-americains.",
+    "usages_legitimes": "Catalogage de tes badges professionnels."
+  },
+  "Indala26": {
+    "famille": "badge 125 kHz",
+    "resume": "Ancien format Motorola/Indala, encore installe dans des sites anciens.",
+    "usages_legitimes": "Identification."
+  },
+  "AWID": {
+    "famille": "badge 125 kHz",
+    "resume": "Format AWID, controle d'acces d'entreprise.",
+    "usages_legitimes": "Identification."
+  }
+}

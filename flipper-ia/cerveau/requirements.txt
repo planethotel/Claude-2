@@ -1,0 +1,3 @@
+# Le cerveau tourne aussi sans ces paquets (mode repli / demo).
+anthropic>=0.40      # l'agent Claude (streaming + tool use)
+pyserial>=3.5        # le lien serie avec le Flipper

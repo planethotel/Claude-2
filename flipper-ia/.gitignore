@@ -1,0 +1,11 @@
+# Artefacts de build ufbt
+fap/dist/
+fap/.ufbt/
+*.fap
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.venv/

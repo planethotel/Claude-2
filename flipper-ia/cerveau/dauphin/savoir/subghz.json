@@ -1,0 +1,28 @@
+{
+  "_commentaire": "Cle = valeur du champ 'Protocol' d'un fichier .sub.",
+  "Princeton": {
+    "famille": "radio sous 1 GHz",
+    "resume": "Encodeur PT2262 et compatibles, 315/433 MHz : anciennes telecommandes de portail, sonnettes, prises radio a code fixe.",
+    "usages_legitimes": "Rejouer TA PROPRE telecommande de portail ou de prise, depuis une sauvegarde."
+  },
+  "CAME": {
+    "famille": "radio sous 1 GHz",
+    "resume": "Telecommandes de portail CAME a code fixe.",
+    "usages_legitimes": "Sauvegarde et rejeu de tes propres telecommandes."
+  },
+  "NICE FLO": {
+    "famille": "radio sous 1 GHz",
+    "resume": "Telecommandes Nice a code fixe.",
+    "usages_legitimes": "Sauvegarde de tes telecommandes."
+  },
+  "KeeLoq": {
+    "famille": "radio sous 1 GHz",
+    "resume": "Systeme a code tournant (voitures, portails recents). Chaque appui change le code : une simple copie ne rejoue pas.",
+    "usages_legitimes": "Comprendre pourquoi un enregistrement de ce type ne se rejoue pas tel quel."
+  },
+  "RAW": {
+    "famille": "radio sous 1 GHz",
+    "resume": "Capture brute du signal, sans decodage de protocole.",
+    "usages_legitimes": "Rejouer un signal simple que tu as toi-meme enregistre."
+  }
+}
