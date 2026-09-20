@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Genere les animations de la mascotte pour le FAP.
+"""Genere les animations de la mascotte pour le FAP -- un crane anime.
 
 Chaque humeur devient un dossier `fap/images/dauphin_<humeur>/` contenant les
 images `frame_XX.png` et un fichier `frame_rate`. Le compilateur d'assets du
-firmware en fait une icone animee nommee `A_dauphin_<humeur>`.
+firmware en fait une icone animee nommee `A_dauphin_<humeur>`. Les noms de
+dossiers/symboles restent "dauphin_*" pour ne rien casser cote FAP (vue_mascotte.c
+les reference telles quelles) -- seul le dessin a change.
 
 Convention : on dessine en **noir sur blanc**, le noir devient un pixel allume
 sur l'ecran du Flipper (le firmware convertit puis inverse).
@@ -29,65 +31,70 @@ def nouvelle_image() -> tuple[Image.Image, ImageDraw.ImageDraw]:
     return image, ImageDraw.Draw(image)
 
 
-def dessiner_dauphin(
+def dessiner_crane(
     d: ImageDraw.ImageDraw,
     dy: int = 0,
-    queue: int = 0,
+    inclinaison: int = 0,
+    machoire: int = 0,
     oeil: str = "ouvert",
-    bouche: str = "neutre",
 ) -> None:
-    """Dauphin de profil, tourne vers la gauche.
+    """Crane de face, style pixel-art classique (silhouette blanche, trait noir).
 
-    dy      decalage vertical du corps (respiration, saut)
-    queue   decalage vertical du bout de la queue (nage)
-    oeil    ouvert | ferme | grand
-    bouche  neutre | sourire | moue
+    dy            decalage vertical (respiration, sursaut)
+    inclinaison   decalage horizontal du bas du crane (tete penchee)
+    machoire      ecartement de la machoire (0 = fermee, >0 = bouche ouverte)
+    oeil          ouvert | ferme | grand | tombant
     """
     y = dy
+    p = inclinaison
 
-    # Corps
-    d.ellipse((3, 12 + y, 27, 26 + y), fill=NOIR)
-
-    # Museau
-    d.polygon([(0, 21 + y), (11, 16 + y), (11, 23 + y)], fill=NOIR)
-
-    # Aileron dorsal
-    d.polygon([(14, 13 + y), (19, 5 + y), (22, 13 + y)], fill=NOIR)
-
-    # Nageoire pectorale
-    d.polygon([(11, 22 + y), (14, 29 + y), (18, 23 + y)], fill=NOIR)
-
-    # Queue : le bout bouge
+    # Contour exterieur : calotte + machoire, en noir plein.
+    d.ellipse((3, 2 + y, 31, 20 + y), fill=NOIR)
     d.polygon(
         [
-            (24, 15 + y),
-            (33, 10 + y + queue),
-            (30, 18 + y + queue // 2),
-            (33, 26 + y + queue),
-            (24, 23 + y),
+            (9 + p, 15 + y),
+            (25 + p, 15 + y),
+            (23 + p, 29 + y + machoire),
+            (11 + p, 29 + y + machoire),
         ],
         fill=NOIR,
     )
 
-    # Oeil, creuse en blanc dans le corps
-    if oeil == "ferme":
-        d.line((8, 17 + y, 12, 17 + y), fill=BLANC)
-    elif oeil == "grand":
-        d.ellipse((7, 14 + y, 13, 20 + y), fill=BLANC)
-        d.ellipse((9, 16 + y, 11, 18 + y), fill=NOIR)
-    else:
-        d.ellipse((8, 15 + y, 12, 19 + y), fill=BLANC)
-        d.point((10, 17 + y), fill=NOIR)
+    # Interieur blanc, legerement plus petit : ca cree le trait noir du contour.
+    d.ellipse((5, 4 + y, 29, 17 + y), fill=BLANC)
+    d.polygon(
+        [
+            (11 + p, 17 + y),
+            (23 + p, 17 + y),
+            (21 + p, 26 + y + machoire),
+            (13 + p, 26 + y + machoire),
+        ],
+        fill=BLANC,
+    )
 
-    # Bouche : une entaille blanche le long du museau
-    if bouche == "sourire":
-        d.line((2, 22 + y, 7, 23 + y), fill=BLANC)
-        d.line((7, 23 + y, 10, 21 + y), fill=BLANC)
-    elif bouche == "moue":
-        d.line((2, 21 + y, 7, 21 + y), fill=BLANC)
-        d.line((7, 21 + y, 10, 23 + y), fill=BLANC)
+    # Orbites
+    if oeil == "ferme":
+        d.line((9, 10 + y, 14, 10 + y), fill=NOIR, width=2)
+        d.line((20, 10 + y, 25, 10 + y), fill=NOIR, width=2)
+    elif oeil == "grand":
+        d.ellipse((7, 7 + y, 15, 15 + y), fill=NOIR)
+        d.ellipse((19, 7 + y, 27, 15 + y), fill=NOIR)
+    elif oeil == "tombant":
+        d.ellipse((7, 8 + y, 14, 14 + y), fill=NOIR)
+        d.ellipse((20, 9 + y, 27, 16 + y), fill=NOIR)
     else:
-        d.line((2, 21 + y, 10, 22 + y), fill=BLANC)
+        d.ellipse((8, 8 + y, 14, 14 + y), fill=NOIR)
+        d.ellipse((20, 8 + y, 26, 14 + y), fill=NOIR)
+
+    # Cavite nasale
+    d.polygon([(17, 14 + y), (15, 18 + y), (19, 18 + y)], fill=NOIR)
+
+    # Dents : traits verticaux le long du bas de la machoire.
+    bas_machoire = 25 + y + machoire
+    haut_dents = 19 + y
+    for tx in range(13, 22, 3):
+        d.line((tx + p, haut_dents, tx + p, bas_machoire), fill=NOIR)
+    d.line((11 + p, haut_dents, 23 + p, haut_dents), fill=NOIR)
 
 
 def bulle_pensee(d: ImageDraw.ImageDraw, etape: int) -> None:
@@ -103,12 +110,13 @@ def bulle_pensee(d: ImageDraw.ImageDraw, etape: int) -> None:
 
 
 def ondes(d: ImageDraw.ImageDraw, etape: int) -> None:
-    """Arcs concentriques devant le museau : il ecoute."""
+    """Arcs concentriques a droite du crane : il ecoute."""
+    cx = 34
     for i in range(3):
         if i > etape:
             continue
         rayon = 4 + i * 4
-        d.arc((-rayon, 17 - rayon, rayon, 17 + rayon), start=250, end=110, fill=NOIR)
+        d.arc((cx - rayon, 11 - rayon, cx + rayon, 11 + rayon), start=110, end=250, fill=NOIR)
 
 
 def zzz(d: ImageDraw.ImageDraw, etape: int) -> None:
@@ -126,15 +134,15 @@ def zzz(d: ImageDraw.ImageDraw, etape: int) -> None:
 def point_exclamation(d: ImageDraw.ImageDraw, plein: bool) -> None:
     if not plein:
         return
-    d.rectangle((3, 0, 5, 6), fill=NOIR)
-    d.rectangle((3, 8, 5, 9), fill=NOIR)
+    d.rectangle((0, 3, 2, 9), fill=NOIR)
+    d.rectangle((0, 11, 2, 12), fill=NOIR)
 
 
 def goutte(d: ImageDraw.ImageDraw, etape: int) -> None:
-    """Une goutte de sueur : il n'est pas rassure."""
-    y = 6 + etape * 3
-    d.ellipse((24, y, 28, y + 5), fill=NOIR)
-    d.polygon([(26, y - 3), (24, y + 2), (28, y + 2)], fill=NOIR)
+    """Une goutte de sueur sur la tempe : il n'est pas rassure."""
+    y = 3 + etape * 3
+    d.ellipse((28, y, 32, y + 5), fill=NOIR)
+    d.polygon([(30, y - 3), (28, y + 2), (32, y + 2)], fill=NOIR)
 
 
 # --------------------------------------------------------------------------
@@ -144,11 +152,9 @@ def goutte(d: ImageDraw.ImageDraw, etape: int) -> None:
 
 def humeur_repos() -> list[Image.Image]:
     images = []
-    for i, (dy, queue, oeil) in enumerate(
-        [(0, 0, "ouvert"), (1, 2, "ouvert"), (1, 0, "ferme"), (0, -2, "ouvert")]
-    ):
+    for dy, oeil in [(0, "ouvert"), (1, "ouvert"), (1, "ferme"), (0, "ouvert")]:
         image, d = nouvelle_image()
-        dessiner_dauphin(d, dy=dy, queue=queue, oeil=oeil)
+        dessiner_crane(d, dy=dy, oeil=oeil)
         images.append(image)
     return images
 
@@ -157,7 +163,7 @@ def humeur_ecoute() -> list[Image.Image]:
     images = []
     for etape in range(4):
         image, d = nouvelle_image()
-        dessiner_dauphin(d, dy=0, queue=(1 if etape % 2 else -1), oeil="grand")
+        dessiner_crane(d, dy=0, inclinaison=(1 if etape % 2 else -1), oeil="grand")
         ondes(d, etape if etape < 3 else 2)
         images.append(image)
     return images
@@ -167,7 +173,7 @@ def humeur_reflechit() -> list[Image.Image]:
     images = []
     for etape in range(4):
         image, d = nouvelle_image()
-        dessiner_dauphin(d, dy=1, queue=0, oeil="ferme" if etape == 3 else "ouvert")
+        dessiner_crane(d, dy=1, inclinaison=1, oeil="ferme" if etape == 3 else "ouvert")
         bulle_pensee(d, etape if etape < 3 else 2)
         images.append(image)
     return images
@@ -175,18 +181,18 @@ def humeur_reflechit() -> list[Image.Image]:
 
 def humeur_content() -> list[Image.Image]:
     images = []
-    for dy, queue in [(2, 0), (0, 3), (-2, 0), (0, -3)]:
+    for dy, machoire in [(2, 3), (0, 5), (-1, 3), (0, 5)]:
         image, d = nouvelle_image()
-        dessiner_dauphin(d, dy=dy, queue=queue, oeil="ouvert", bouche="sourire")
+        dessiner_crane(d, dy=dy, machoire=machoire, oeil="grand")
         images.append(image)
     return images
 
 
 def humeur_surpris() -> list[Image.Image]:
     images = []
-    for plein in (True, False):
+    for plein, machoire in ((True, 6), (False, 1)):
         image, d = nouvelle_image()
-        dessiner_dauphin(d, dy=-1, queue=0, oeil="grand", bouche="neutre")
+        dessiner_crane(d, dy=-1, machoire=machoire, oeil="grand")
         point_exclamation(d, plein)
         images.append(image)
     return images
@@ -196,7 +202,7 @@ def humeur_inquiet() -> list[Image.Image]:
     images = []
     for etape in range(3):
         image, d = nouvelle_image()
-        dessiner_dauphin(d, dy=1, queue=0, oeil="ouvert", bouche="moue")
+        dessiner_crane(d, dy=1, inclinaison=-1, machoire=1, oeil="tombant")
         goutte(d, etape)
         images.append(image)
     return images
@@ -207,7 +213,7 @@ def humeur_dort() -> list[Image.Image]:
     for etape in range(4):
         image, d = nouvelle_image()
         respire = int(math.sin(etape / 4 * math.tau) * 1.5)
-        dessiner_dauphin(d, dy=2 + respire, queue=0, oeil="ferme")
+        dessiner_crane(d, dy=2 + respire, machoire=1, oeil="ferme")
         zzz(d, etape if etape < 3 else 2)
         images.append(image)
     return images
@@ -225,13 +231,15 @@ HUMEURS = {
 
 
 def generer_icone_app(sortie: Path) -> None:
-    """La petite icone 10x10 du menu des applications."""
+    """La petite icone 10x10 du menu des applications : un crane miniature."""
     image = Image.new("L", (10, 10), BLANC)
     d = ImageDraw.Draw(image)
-    d.ellipse((1, 3, 7, 7), fill=NOIR)
-    d.polygon([(0, 5), (3, 3), (3, 7)], fill=NOIR)
-    d.polygon([(4, 3), (5, 0), (6, 3)], fill=NOIR)
-    d.polygon([(6, 3), (9, 1), (9, 9), (6, 7)], fill=NOIR)
+    d.ellipse((0, 0, 9, 6), fill=NOIR)
+    d.ellipse((1, 1, 8, 5), fill=BLANC)
+    d.point((3, 3), fill=NOIR)
+    d.point((6, 3), fill=NOIR)
+    d.rectangle((3, 6, 6, 8), fill=NOIR)
+    d.rectangle((4, 6, 5, 8), fill=BLANC)
     image.convert("1").save(sortie / "icone_10px.png")
 
 

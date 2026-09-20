@@ -22,6 +22,11 @@ peau et ses humeurs, réagit en direct.
    └───────────────────┘                  └──────────────────────┘
 ```
 
+Le cerveau est juste un programme Python : il tourne aussi bien sur un PC
+**que sur ton téléphone** (Termux, via USB-OTG) — c'est alors le téléphone qui
+prête sa connexion (WiFi ou données mobiles) à la place d'un ordinateur. Voir
+« Le cerveau sur ton téléphone » plus bas.
+
 ## Ce qu'elle sait faire
 
 - **Se présenter et vivre** : sept humeurs animées (repos, écoute, réflexion,
@@ -85,6 +90,34 @@ FAP tu peux basculer sur l'**UART** (broches 13 = TX, 14 = RX, 115200 bauds) si
 tu préfères un module externe. Côté cerveau, `--port` désigne le port CDC data ;
 sur Linux c'est souvent `/dev/ttyACM1`.
 
+## Le cerveau sur ton téléphone (S25 Ultra, Termux)
+
+Le cerveau n'a rien de spécifique à un PC : c'est du Python qui lit un port
+série et appelle l'API Claude. Il tourne exactement pareil sur Android via
+[Termux](https://f-droid.org/packages/com.termux/) — le téléphone devient le
+cerveau, branché en **USB-OTG** au Flipper, et c'est **sa** connexion (WiFi ou
+5G) qui sert à parler à Claude. Plus besoin d'ordinateur du tout.
+
+```bash
+# Sur le telephone, dans Termux, apres avoir copie le dossier cerveau/ :
+bash cerveau/termux/installer.sh
+```
+
+Le script installe Python et les dépendances, puis affiche la marche à suivre
+pour accorder au Flipper la permission USB via `termux-usb` (le mécanisme
+officiel de Termux pour parler à un périphérique série branché en OTG — le
+même que pour flasher un ESP32 ou un Arduino depuis le téléphone).
+
+**Honnêteté** : cette partie n'a pas pu être testée sur un vrai téléphone
+(aucun matériel Android dans l'environnement de développement). Le script
+suit le chemin documenté par Termux, mais si `termux-usb` ne coopère pas du
+premier coup chez toi, dis-moi ce qu'il affiche et on ajustera — en attendant,
+le PC classique (ci-dessus) reste l'option la plus sûre.
+
+Le **Bluetooth** (plutôt que le fil) demanderait d'implémenter un profil série
+Bluetooth dans le firmware du FAP lui-même — un chantier plus lourd, pas fait
+pour l'instant faute de pouvoir le vérifier sur un appareil réel ici.
+
 ## Organisation du dépôt
 
 ```
@@ -101,7 +134,8 @@ flipper-ia/
 │   ├── dauphin/agent.py   L'agent Claude (streaming + boucle d'outils)
 │   ├── dauphin/connaisseur.py   Interprète l'inventaire via les fiches
 │   ├── dauphin/pont.py    Relie le série à l'agent
-│   └── dauphin/savoir/    Fiches d'identification (NFC, RFID, Sub-GHz, IR)
+│   ├── dauphin/savoir/    Fiches d'identification (NFC, RFID, Sub-GHz, IR)
+│   └── termux/            Installe le cerveau sur téléphone Android (USB-OTG)
 └── outils/                Générateur d'animations, script de build
 ```
 
