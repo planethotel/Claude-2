@@ -36,17 +36,35 @@ class Canal:
 
 
 class CanalSerie(Canal):
-    """Canal au-dessus d'un port serie (USB CDC canal 1, ou UART)."""
+    """Canal au-dessus d'un port serie (USB CDC canal 1, ou UART).
+
+    Quand on ferme ou relance l'appli sur le Flipper, le FAP reconfigure son
+    USB (`furi_hal_usb_set_config`) : le port serie de l'ordinateur disparait
+    puis revient, parfois sous Windows avec le meme nom mais un descripteur
+    devenu invalide. Sans precaution, la premiere lecture ou ecriture qui
+    suit leve une exception qui plante tout le processus. Ce canal se
+    reconnecte tout seul a la place.
+    """
 
     def __init__(self, port: str, debit: int = 115200, timeout: float = 0.2) -> None:
         import serial  # importe seulement si on s'en sert
 
+        self._port = port
+        self._debit = debit
+        self._timeout = timeout
+        self._fermeture_demandee = False
         self._serie = serial.Serial(port, debit, timeout=timeout)
         self._reste = b""
 
     def lignes(self) -> Iterator[str]:
-        while True:
-            morceau = self._serie.readline()
+        import serial
+
+        while not self._fermeture_demandee:
+            try:
+                morceau = self._serie.readline()
+            except serial.SerialException:
+                self._reconnecter()
+                continue
             if not morceau:
                 return
             self._reste += morceau
@@ -55,12 +73,48 @@ class CanalSerie(Canal):
                 self._reste = b""
                 yield ligne
 
+    def _reconnecter(self) -> None:
+        """Reessaie d'ouvrir le port jusqu'a ce que le Flipper revienne."""
+        import serial
+
+        logger.warning(
+            "connexion a %s perdue (le FAP a probablement ferme ou reconfigure "
+            "son port) -- reconnexion en cours...",
+            self._port,
+        )
+        try:
+            self._serie.close()
+        except Exception:  # le port est deja dans un sale etat, on l'ignore
+            pass
+
+        while not self._fermeture_demandee:
+            time.sleep(2)
+            try:
+                self._serie = serial.Serial(self._port, self._debit, timeout=self._timeout)
+            except serial.SerialException:
+                continue
+            self._reste = b""
+            logger.info("reconnecte a %s", self._port)
+            return
+
     def envoyer(self, ligne: str) -> None:
-        self._serie.write(ligne.encode("ascii", errors="replace"))
-        self._serie.flush()
+        import serial
+
+        try:
+            self._serie.write(ligne.encode("ascii", errors="replace"))
+            self._serie.flush()
+        except serial.SerialException:
+            # On ne relance pas la reconnexion ici : la prochaine lecture dans
+            # lignes() s'en chargera. Mieux vaut perdre cette ligne que de
+            # planter en pleine gestion d'une autre erreur (voir pont._lancer_agent).
+            logger.warning("envoi impossible sur %s, ligne perdue", self._port)
 
     def fermer(self) -> None:
-        self._serie.close()
+        self._fermeture_demandee = True
+        try:
+            self._serie.close()
+        except Exception:
+            pass
 
 
 class Pont:
