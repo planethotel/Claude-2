@@ -1,84 +1,40 @@
-# Mystère Fragrances — site web
+# Est-ce que je te plais ? — questionnaire
 
-Site vitrine de la parfumerie **Mystère Fragrances — D'ici et d'ailleurs**,
-42 avenue de Grammont, 37000 Tours.
-
-HTML / CSS / JavaScript natifs. **Aucune dépendance, aucun build, aucun framework.**
-Il suffit d'ouvrir `index.html` ou de déposer le dossier sur un hébergeur.
+Un petit questionnaire ludique en une page, à envoyer à quelqu'un pour lui
+demander ce qu'elle pense de vous. HTML / CSS / JavaScript natifs.
+**Aucune dépendance, aucun build, aucun framework.**
 
 ---
 
 ## Contenu
 
 ```
-index.html            La page complète
-assets/css/style.css  Styles, animations, responsive
-assets/js/main.js     Interactions (carrousel 3D, horaires, révélations…)
-assets/img/           Photos de la boutique, recadrées et optimisées
+index.html   La page complète (structure, style et logique)
 ```
 
-## Les sections
+## Comment ça marche
 
-| # | Section | Ce qu'elle fait |
-|---|---------|-----------------|
-| — | **Voile d'ouverture** | Le nom se compose lettre à lettre, puis le voile se lève |
-| — | **Héro** | Devanture de nuit en parallaxe + Ken Burns, poussière d'or animée sur canvas, titre lettre à lettre |
-| 01 | **L'Essence** | Texte de présentation, photos avec rideau de révélation, compteurs animés |
-| 02 | **Le Cercle** | Carrousel **3D** des flacons — les vraies photos de la boutique tournent en cercle. Glisser à la souris ou au doigt, flèches, pastilles, flèches du clavier, dérive automatique |
-| 03 | **Pyramide olfactive** | Tête / cœur / fond, interactive au survol et au clic, avec volutes animées |
-| 04 | **La Boutique** | Mosaïque de photos + visionneuse plein écran |
-| 05 | **Avis** | Note 5,0 et synthèse des avis Google |
-| 06 | **Nous trouver** | Horaires avec **badge Ouvert/Fermé calculé en direct** (heure de Paris), adresse, téléphone, TikTok, carte stylisée |
+Le questionnaire compte 9 questions qui s'enchaînent sur un seul écran :
 
-## Coordonnées inscrites dans le site
+1. **Est-ce que je te plais ?** — si "Non", le questionnaire s'arrête sur une
+   réponse assumée ; si "Oui", il continue.
+2. **Type de relation voulu** — 7 choix, chacun déclenche une réplique différente.
+3. **Ce qu'elle aime** — choix multiples, avec une réponse qui reprend sa liste.
+4–7. **Notes sur 10** (prestation, soirée en boîte, attirance, chance de sortir
+   ensemble) via des curseurs.
+8. **L'homme idéal** — question ouverte, suivie d'une réplique.
+9. **A-t-elle aimé le questionnaire ?**
 
-- **Adresse** — 42 avenue de Grammont, 37000 Tours
-- **Téléphone** — 09 63 26 33 93 (cliquable sur mobile via `tel:`)
-- **TikTok** — [@mysterefragrances.37](https://www.tiktok.com/@mysterefragrances.37)
-- **Horaires** — lundi au samedi, 10:30–13:30 et 14:30–19:30 · dimanche fermé
-
-Ces informations apparaissent aussi en **données structurées Schema.org**
-(`PerfumeStore`) dans le `<head>` : Google peut les afficher directement
-dans les résultats de recherche.
-
----
-
-## Modifier le contenu
-
-**Horaires** — le tableau se trouve dans `index.html` (section « Nous trouver »).
-Si les créneaux changent, pensez à mettre à jour **aussi** la constante `SLOTS`
-dans `assets/js/main.js` (minutes depuis minuit : `[[630, 810], [870, 1170]]`)
-et le bloc `openingHoursSpecification` du `<head>` — c'est ce qui alimente le
-badge « Ouvert / Fermé » et le référencement.
-
-**Les parfums du Cercle** — tableau `CERCLE` en haut de la partie carrousel
-dans `assets/js/main.js`. Chaque entrée prend une image, un nom, une maison,
-une famille, une description et trois mots-clés. Les descriptions actuelles
-sont des impressions rédigées d'après les photos, pas des fiches techniques :
-**à relire et à ajuster selon votre stock réel.**
-
-**Photos** — déposez les nouvelles images dans `assets/img/` et changez les
-chemins. Format conseillé : JPEG, 1400 px de large environ.
-
----
+L'écran final récapitule toutes les réponses et propose :
+- un bouton qui ouvre un e-mail pré-rempli avec toutes les réponses ;
+- un bouton pour copier les réponses dans le presse-papiers, en secours.
 
 ## Mettre en ligne
 
-Le site est entièrement statique. Au choix :
+Le site est entièrement statique et se déploie automatiquement sur
+**GitHub Pages** via `.github/workflows/deploy-pages.yml` à chaque push.
+Il peut aussi être ouvert directement en local, ou déposé tel quel sur
+n'importe quel hébergeur statique (Netlify, Vercel, OVH…).
 
-- **Netlify / Vercel** — glisser-déposer le dossier, c'est en ligne.
-- **GitHub Pages** — activer Pages sur la branche voulue, racine `/`.
-- **Hébergement classique (OVH, Ionos…)** — envoyer le dossier en FTP.
-
-Aucune configuration serveur n'est nécessaire.
-
----
-
-## Détails techniques
-
-- Responsive de 320 px à 4K, aucun défilement horizontal.
-- `prefers-reduced-motion` respecté : toutes les animations se coupent pour
-  les personnes qui en font la demande dans leur système.
-- Navigation au clavier sur le carrousel (flèches ← →) et la visionneuse (Échap).
-- Textes alternatifs sur toutes les images, libellés ARIA sur les commandes.
-- Deux polices Google Fonts (Cormorant Garamond, Jost) avec repli système.
+Aucune configuration serveur n'est nécessaire, et aucun compte n'est requis
+pour consulter la page une fois publiée.
