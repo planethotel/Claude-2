@@ -1,506 +1,711 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mystère Fragrances — Parfumerie d'ici et d'ailleurs · Tours</title>
-<meta name="description" content="Mystère Fragrances, parfumerie de niche au 42 avenue de Grammont à Tours. Parfums d'ici et d'ailleurs, extraits orientaux, diffuseurs et bougies. Conseil personnalisé, 5,0 ★ sur Google.">
-<meta name="theme-color" content="#08060a">
-<meta name="author" content="Mystère Fragrances">
-<link rel="canonical" href="https://mysterefragrances.fr/">
-
-<meta property="og:type" content="business.business">
-<meta property="og:site_name" content="Mystère Fragrances">
-<meta property="og:title" content="Mystère Fragrances — D'ici et d'ailleurs · Tours">
-<meta property="og:description" content="Parfumerie de niche au 42 avenue de Grammont, Tours. Extraits, orientaux, diffuseurs, bougies. Conseil personnalisé.">
-<meta property="og:image" content="assets/img/boutique-nuit.jpg">
-<meta property="og:locale" content="fr_FR">
-<meta name="twitter:card" content="summary_large_image">
-
-<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="assets/img/favicon.svg">
-
+<title>Est-ce que je te plais ?</title>
+<meta name="description" content="Un petit questionnaire ludique en 9 questions.">
+<meta name="color-scheme" content="light dark">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,600&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF3EC;
+    --surface:#FFFFFF;
+    --surface-2:#FFE7EE;
+    --ink:#2B1B2E;
+    --muted:#8A7387;
+    --accent:#FF4D6D;
+    --accent-ink:#FFFFFF;
+    --accent-soft:#FFD9E1;
+    --accent-2:#6C4AB6;
+    --accent-2-soft:#E7DEFA;
+    --line:#F1D9DE;
+    --shadow: 0 20px 40px -24px rgba(107,32,60,0.35);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1B1220;
+      --surface:#271A2E;
+      --surface-2:#33223C;
+      --ink:#F6EAF1;
+      --muted:#C0A7BA;
+      --accent:#FF6B87;
+      --accent-ink:#1B1220;
+      --accent-soft:#4A2A3A;
+      --accent-2:#B49CF0;
+      --accent-2-soft:#3B2E52;
+      --line:#3D2A42;
+      --shadow: 0 20px 40px -20px rgba(0,0,0,0.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1B1220;
+    --surface:#271A2E;
+    --surface-2:#33223C;
+    --ink:#F6EAF1;
+    --muted:#C0A7BA;
+    --accent:#FF6B87;
+    --accent-ink:#1B1220;
+    --accent-soft:#4A2A3A;
+    --accent-2:#B49CF0;
+    --accent-2-soft:#3B2E52;
+    --line:#3D2A42;
+    --shadow: 0 20px 40px -20px rgba(0,0,0,0.6);
+  }
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "PerfumeStore",
-  "name": "Mystère Fragrances",
-  "alternateName": "Mystère Fragrances — D'ici et d'ailleurs",
-  "description": "Parfumerie de niche à Tours : parfums d'ici et d'ailleurs, extraits, diffuseurs et bougies parfumées.",
-  "image": "assets/img/boutique-nuit.jpg",
-  "telephone": "+33963263393",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "42 avenue de Grammont",
-    "postalCode": "37000",
-    "addressLocality": "Tours",
-    "addressCountry": "FR"
-  },
-  "sameAs": ["https://www.tiktok.com/@mysterefragrances.37"],
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "5.0",
-    "reviewCount": "20",
-    "bestRating": "5"
-  },
-  "openingHoursSpecification": [
-    {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"10:30","closes":"13:30"},
-    {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"14:30","closes":"19:30"}
-  ]
-}
-</script>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(60% 50% at 15% -5%, var(--accent-soft) 0%, transparent 60%),
+      radial-gradient(50% 45% at 100% 0%, var(--accent-2-soft) 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"Nunito",system-ui,sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding-inline:16px;
+    padding-block:32px;
+  }
+  h1,h2,h3,.display{
+    font-family:"Fraunces",Georgia,serif;
+    font-weight:600;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  .wrap{
+    width:100%;
+    max-width:440px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    justify-content:center;
+    color:var(--accent);
+  }
+  .brand svg{width:22px;height:22px;flex:none;}
+  .brand span{
+    font-family:"Fraunces",serif;
+    font-weight:600;
+    font-size:15px;
+    letter-spacing:0.02em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .progress{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .progress-track{
+    flex:1;
+    height:8px;
+    border-radius:99px;
+    background:var(--surface-2);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    border-radius:99px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    transition:width .5s cubic-bezier(.65,0,.35,1);
+  }
+  .progress-label{
+    font-size:12px;
+    font-weight:800;
+    color:var(--muted);
+    white-space:nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:26px;
+    padding:30px 26px;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(120% 60% at 0% 0%, var(--accent-soft) 0%, transparent 45%);
+    opacity:.6;
+    pointer-events:none;
+  }
+  .card > *{position:relative;}
+  .eyebrow{
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 8px;
+  }
+  .question{
+    font-size:26px;
+    line-height:1.2;
+    margin:0 0 18px;
+  }
+  .sub{
+    color:var(--muted);
+    font-size:14.5px;
+    font-weight:600;
+    margin:-10px 0 18px;
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .opt{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    text-align:left;
+    width:100%;
+    padding:14px 16px;
+    border-radius:16px;
+    border:1.5px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+    font-family:inherit;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    transition:border-color .15s, background .15s, transform .1s;
+  }
+  .opt:hover{border-color:var(--accent);background:var(--accent-soft);}
+  .opt:active{transform:scale(.98);}
+  .opt.big{
+    justify-content:center;
+    font-size:16px;
+    padding:16px;
+  }
+  .opt .tick{
+    flex:none;
+    width:20px;height:20px;
+    border-radius:6px;
+    border:2px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color .15s, background .15s;
+  }
+  .opt.checked{border-color:var(--accent);background:var(--accent-soft);}
+  .opt.checked .tick{background:var(--accent);border-color:var(--accent);}
+  .opt .tick svg{width:12px;height:12px;opacity:0;transition:opacity .1s;}
+  .opt.checked .tick svg{opacity:1;}
+
+  .btn{
+    appearance:none;
+    border:none;
+    border-radius:16px;
+    padding:15px 20px;
+    font-family:inherit;
+    font-weight:800;
+    font-size:15.5px;
+    cursor:pointer;
+    width:100%;
+    transition:transform .1s, opacity .15s, box-shadow .15s;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn-primary{
+    background:linear-gradient(120deg,var(--accent),var(--accent-2));
+    color:#fff;
+    box-shadow:0 12px 24px -10px rgba(255,77,109,.55);
+  }
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;}
+  .btn-ghost{
+    background:transparent;
+    color:var(--muted);
+    border:1.5px solid var(--line);
+  }
+  .row-actions{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:22px;
+  }
+
+  .reply-box{
+    background:var(--accent-2-soft);
+    border-radius:18px;
+    padding:18px 18px;
+    font-size:16px;
+    font-weight:700;
+    line-height:1.45;
+    color:var(--ink);
+    margin-bottom:20px;
+  }
+
+  .scale-value{
+    font-family:"Fraunces",serif;
+    font-size:56px;
+    font-weight:700;
+    text-align:center;
+    color:var(--accent);
+    line-height:1;
+    margin:6px 0 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .scale-value span{font-size:22px;color:var(--muted);font-weight:700;}
+  input[type=range]{
+    width:100%;
+    margin:18px 0 6px;
+    accent-color:var(--accent);
+    height:6px;
+  }
+  .scale-labels{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:var(--muted);
+    font-weight:700;
+  }
+
+  textarea{
+    width:100%;
+    min-height:120px;
+    border-radius:16px;
+    border:1.5px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+    font-family:inherit;
+    font-size:15px;
+    padding:14px;
+    resize:vertical;
+  }
+  textarea:focus{outline:2px solid var(--accent);outline-offset:1px;}
+
+  .center-emoji{font-size:44px;text-align:center;margin-bottom:6px;}
+
+  .recap{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin:18px 0 6px;
+  }
+  .recap-item{
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:12px 14px;
+  }
+  .recap-q{
+    font-size:11.5px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    color:var(--accent-2);
+    margin-bottom:4px;
+  }
+  .recap-a{font-size:14.5px;font-weight:700;}
+
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:24px;
+    transform:translate(-50%,0);
+    background:var(--ink);
+    color:var(--bg);
+    padding:10px 18px;
+    border-radius:99px;
+    font-size:13.5px;
+    font-weight:700;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s, transform .2s;
+    z-index:10;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,-6px);}
+
+  @keyframes fadeSlide{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .fade-in{animation:fadeSlide .35s cubic-bezier(.2,.8,.2,1) both;}
+
+  @media (prefers-reduced-motion: reduce){
+    .fade-in{animation:none;}
+    .progress-fill{transition:none;}
+  }
+
+  a.btn-primary{display:block;text-align:center;text-decoration:none;box-sizing:border-box;}
+</style>
 </head>
 <body>
 
-<!-- ═══════════════ VOILE D'OUVERTURE ═══════════════ -->
-<div class="veil" id="veil" aria-hidden="true">
-  <div class="veil__inner">
-    <svg class="veil__mark" viewBox="0 0 64 64" aria-hidden="true"><use href="#flacon"></use></svg>
-    <div class="veil__word" aria-hidden="true">
-      <span>M</span><span>Y</span><span>S</span><span>T</span><span>È</span><span>R</span><span>E</span>
-    </div>
-    <div class="veil__bar"><i></i></div>
+<div class="wrap">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-10.2-9.2C.1 8.7 1.4 5 5 4.1c2.1-.5 4.1.4 5.3 2.1L12 8.1l1.7-1.9c1.2-1.7 3.2-2.6 5.3-2.1C22.6 5 23.9 8.7 22.2 11.8 19.5 16.4 12 21 12 21z"/></svg>
+    <span>un petit questionnaire</span>
   </div>
+  <div class="progress" id="progressRow">
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-label" id="progressLabel">0/9</div>
+  </div>
+  <div id="stage"></div>
 </div>
+<div class="toast" id="toast"></div>
 
-<!-- ═══════════════ SYMBOLES SVG ═══════════════ -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-  <symbol id="flacon" viewBox="0 0 64 64">
-    <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M24 26h16a9 9 0 0 1 9 9v11a9 9 0 0 1-9 9H24a9 9 0 0 1-9-9V35a9 9 0 0 1 9-9Z"/>
-      <path d="M28 26v-5h8v5"/>
-      <path d="M36 21h6a4 4 0 0 1 4 4v2"/>
-      <circle cx="52" cy="22" r="5"/>
-      <path d="M22 40c2.6-3.2 6-4.8 10-4.8s7.4 1.6 10 4.8"/>
-      <path d="M9 47c-3-2-4.5-5-4.5-9M55 47c3-2 4.5-5 4.5-9"/>
-    </g>
-  </symbol>
-  <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M6.6 3.5h3l1.6 4-2 1.4a12.4 12.4 0 0 0 5.9 5.9l1.4-2 4 1.6v3a2 2 0 0 1-2.2 2A16.9 16.9 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2Z"/></symbol>
-  <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></g></symbol>
-  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.2V12l3.2 2"/></g></symbol>
-  <symbol id="i-tiktok" viewBox="0 0 24 24"><path fill="currentColor" d="M16.8 2h-2.9v13.2a2.6 2.6 0 1 1-2.2-2.6v-3a5.6 5.6 0 1 0 5.1 5.6V9.1a6.6 6.6 0 0 0 3.8 1.2V7.4a3.8 3.8 0 0 1-3.8-3.8V2Z"/></symbol>
-  <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="m12 17.6-5.3 3 1.2-6-4.4-4.2 6-.8L12 4l2.5 5.6 6 .8-4.4 4.2 1.2 6Z"/></symbol>
-</svg>
+<script>
+(function(){
+  "use strict";
 
-<!-- ═══════════════ CURSEUR ═══════════════ -->
-<div class="cursor" id="cursor" aria-hidden="true"><span class="cursor__dot"></span><span class="cursor__ring"></span></div>
+  var TOTAL_Q = 9;
 
-<!-- ═══════════════ NAVIGATION ═══════════════ -->
-<div class="progress" id="progress" aria-hidden="true"></div>
-<header class="nav" id="nav">
-  <a class="nav__brand" href="#top" data-cursor="link">
-    <svg class="nav__mark" viewBox="0 0 64 64" aria-hidden="true"><use href="#flacon"></use></svg>
-    <span class="nav__name">Mystère<em>Fragrances</em></span>
-  </a>
-  <nav class="nav__links" aria-label="Navigation principale">
-    <a href="#essence" data-cursor="link">L'Essence</a>
-    <a href="#cercle" data-cursor="link">Le Cercle</a>
-    <a href="#pyramide" data-cursor="link">Pyramide</a>
-    <a href="#boutique" data-cursor="link">La Boutique</a>
-    <a href="#visite" data-cursor="link">Nous trouver</a>
-  </nav>
-  <a class="nav__cta magnetic" href="tel:+33963263393" data-cursor="link">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-phone"></use></svg>
-    <span>09 63 26 33 93</span>
-  </a>
-  <button class="nav__burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false"><i></i><i></i></button>
-</header>
+  var relationReplies = {
+    unsure: "Un proverbe chinois dit : si la montagne bloque la route, fonce et croise les doigts 💀",
+    sexfriend: "😂😂 sérieux, audacieux… mais j'aime l'audace, donc viens en fait",
+    friend: "Je fonce vers la friend zone, je t'appelle de là-bas 🏎",
+    serious: "Je vois que madame a du goût. Je ne peux pas te promettre de tout te donner, mais seulement d'essayer",
+    perfect: "🤣🤣 t'es dans quel monde… mais bon, parfait, c'est comme ça qu'on m'appelle",
+    busride: "Bon choix : avec moi tu vas te retrouver dans des situations improbables, et découvrir quelqu'un de profondément étrange… mais attachant, à tester",
+    soulmate: "Pas mal, du goût pour les bonnes choses. Je pense être capable de te soutenir et de te faire avancer sans t'étouffer. Si c'est ce que tu veux, je sais pas où on ira, mais on ira loin"
+  };
 
-<div class="drawer" id="drawer" aria-hidden="true">
-  <nav aria-label="Navigation mobile">
-    <a href="#essence"><span>01</span>L'Essence</a>
-    <a href="#cercle"><span>02</span>Le Cercle</a>
-    <a href="#pyramide"><span>03</span>Pyramide olfactive</a>
-    <a href="#boutique"><span>04</span>La Boutique</a>
-    <a href="#avis"><span>05</span>Avis</a>
-    <a href="#visite"><span>06</span>Nous trouver</a>
-  </nav>
-  <div class="drawer__foot">
-    <a href="tel:+33963263393">09 63 26 33 93</a>
-    <a href="https://www.tiktok.com/@mysterefragrances.37" target="_blank" rel="noopener">@mysterefragrances.37</a>
-  </div>
-</div>
+  var relationOptions = [
+    {id:"unsure", label:"Je sais pas, t'es relou et tu me mets mal à l'aise"},
+    {id:"sexfriend", label:"Sex friend"},
+    {id:"friend", label:"Amie uniquement"},
+    {id:"serious", label:"Relation sérieuse"},
+    {id:"perfect", label:"Relation parfaite"},
+    {id:"busride", label:"Fou du bus"},
+    {id:"soulmate", label:"Être ton âme sœur et entreprendre ensemble"}
+  ];
 
-<main id="top">
+  var likeOptions = [
+    "Soirée chill",
+    "Airbnb ambiance Netflix",
+    "Grosse teuf puis dodo à l'Airbnb",
+    "Faire de la moto derrière moi",
+    "Petit ciné",
+    "Rien, casse-toi t'es chelou",
+    "Karting",
+    "Petite balade avec discussion de merde"
+  ];
 
-<!-- ═══════════════ HÉRO ═══════════════ -->
-<section class="hero" id="hero">
-  <div class="hero__media" data-parallax="0.22">
-    <img src="assets/img/boutique-nuit.jpg" alt="La devanture illuminée de Mystère Fragrances, avenue de Grammont à Tours, à la nuit tombée" fetchpriority="high">
-  </div>
-  <div class="hero__scrim"></div>
-  <canvas class="hero__dust" id="dust" aria-hidden="true"></canvas>
+  var state = {
+    plait: null,
+    relation: null,
+    likes: [],
+    noteprestation: 5,
+    noteboite: 5,
+    noteattirance: 5,
+    notesortir: 5,
+    hommeideal: "",
+    aime: null
+  };
 
-  <div class="hero__body">
-    <p class="kicker reveal" data-delay="0">Parfumerie · Tours · Avenue de Grammont</p>
-    <h1 class="hero__title">
-      <span class="line"><span class="word" data-split>Mystère</span></span>
-      <span class="line"><em class="word" data-split>Fragrances</em></span>
-    </h1>
-    <p class="hero__rule reveal" data-delay="240"><i></i><span>D'ici et d'ailleurs</span><i></i></p>
-    <p class="hero__lede reveal" data-delay="320">
-      Une adresse confidentielle au cœur de Tours, où les extraits d'Orient
-      croisent les signatures françaises. On y entre pour un flacon,
-      on en ressort avec un sillage.
-    </p>
-    <div class="hero__acts reveal" data-delay="420">
-      <a class="btn btn--gold magnetic" href="#cercle" data-cursor="link"><span>Découvrir le cercle</span></a>
-      <a class="btn btn--ghost magnetic" href="#visite" data-cursor="link"><span>Venir nous voir</span></a>
-    </div>
-    <div class="hero__note reveal" data-delay="520">
-      <span class="stars" aria-label="Note de 5 sur 5">
-        <svg viewBox="0 0 24 24"><use href="#i-star"></use></svg><svg viewBox="0 0 24 24"><use href="#i-star"></use></svg><svg viewBox="0 0 24 24"><use href="#i-star"></use></svg><svg viewBox="0 0 24 24"><use href="#i-star"></use></svg><svg viewBox="0 0 24 24"><use href="#i-star"></use></svg>
-      </span>
-      <strong>5,0</strong> · 20 avis Google
-    </div>
-  </div>
+  var stage = document.getElementById("stage");
+  var progressRow = document.getElementById("progressRow");
+  var progressFill = document.getElementById("progressFill");
+  var progressLabel = document.getElementById("progressLabel");
+  var toastEl = document.getElementById("toast");
+  var toastTimer = null;
 
-  <a class="hero__scroll" href="#essence" aria-label="Faire défiler"><i></i><span>Défiler</span></a>
-</section>
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
 
-<!-- ═══════════════ BANDEAU DÉFILANT ═══════════════ -->
-<div class="ticker" aria-hidden="true">
-  <div class="ticker__track">
-    <span>Extraits de parfum</span><b>◆</b><span>Orientaux</span><b>◆</b><span>Eaux de parfum</span><b>◆</b>
-    <span>Diffuseurs à bâtonnets</span><b>◆</b><span>Bougies parfumées</span><b>◆</b><span>Brumes de linge</span><b>◆</b>
-    <span>Coffrets cadeaux</span><b>◆</b><span>Conseil personnalisé</span><b>◆</b>
-    <span>Extraits de parfum</span><b>◆</b><span>Orientaux</span><b>◆</b><span>Eaux de parfum</span><b>◆</b>
-    <span>Diffuseurs à bâtonnets</span><b>◆</b><span>Bougies parfumées</span><b>◆</b><span>Brumes de linge</span><b>◆</b>
-    <span>Coffrets cadeaux</span><b>◆</b><span>Conseil personnalisé</span><b>◆</b>
-  </div>
-</div>
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2200);
+  }
 
-<!-- ═══════════════ L'ESSENCE ═══════════════ -->
-<section class="essence" id="essence">
-  <div class="essence__grid">
-    <div class="essence__visual">
-      <figure class="frame reveal-mask" data-parallax="0.08">
-        <img src="assets/img/interieur-rayons.jpg" alt="Les rayonnages clairs de la boutique, alignant flacons et coffrets">
-      </figure>
-      <figure class="frame frame--float reveal-mask" data-delay="180" data-parallax="-0.06">
-        <img src="assets/img/interieur-diffuseurs.jpg" alt="Un mur de diffuseurs, bougies et eaux de parfum en boutique">
-      </figure>
-      <span class="essence__seal" aria-hidden="true">
-        <svg viewBox="0 0 64 64"><use href="#flacon"></use></svg>
-      </span>
-    </div>
+  function setProgress(n){
+    if(n == null){
+      progressRow.style.display = "none";
+      return;
+    }
+    progressRow.style.display = "flex";
+    progressFill.style.width = Math.round((n/TOTAL_Q)*100) + "%";
+    progressLabel.textContent = n + "/" + TOTAL_Q;
+  }
 
-    <div class="essence__text">
-      <p class="eyebrow reveal">01 — L'Essence</p>
-      <h2 class="h2 reveal" data-delay="80">Deux mots sur<br><em>l'enseigne</em></h2>
-      <p class="lead reveal" data-delay="160">
-        « D'ici et d'ailleurs » n'est pas une formule. C'est la manière
-        dont la boutique est composée : d'un côté la tradition française,
-        ses hespéridés nets et ses fleurs blanches ; de l'autre l'Orient,
-        ses ouds, ses ambres, ses vanilles épaisses.
-      </p>
-      <p class="reveal" data-delay="220">
-        Au 42 avenue de Grammont, les étagères claires laissent respirer les flacons.
-        On vous tend une touche, on écoute, on affine. Rien n'est vendu à la hâte&nbsp;:
-        un parfum se choisit sur la peau, après quelques minutes de silence.
-      </p>
+  function render(html, progress){
+    stage.innerHTML = '<div class="card fade-in">' + html + '</div>';
+    setProgress(progress);
+    window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
+  }
 
-      <ul class="pills reveal" data-delay="280">
-        <li>Parfums de niche</li><li>Extraits orientaux</li><li>Diffuseurs</li>
-        <li>Bougies</li><li>Coffrets</li><li>Tous les budgets</li>
-      </ul>
+  // ---------- screens ----------
 
-      <div class="stats">
-        <div class="stat reveal" data-delay="320"><b data-count="5" data-decimals="1">0</b><span>Note Google</span></div>
-        <div class="stat reveal" data-delay="380"><b data-count="20">0</b><span>Avis clients</span></div>
-        <div class="stat reveal" data-delay="440"><b data-count="6">0</b><span>Jours d'ouverture</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+  function screenWelcome(){
+    render(
+      '<div class="center-emoji">💌</div>' +
+      '<h1 class="question" style="text-align:center">Un petit questionnaire… rien que pour toi</h1>' +
+      '<p class="sub" style="text-align:center;margin-top:-6px">9 questions, 2 minutes, plein de sincérité (et un peu de second degré 😅)</p>' +
+      '<div class="row-actions">' +
+        '<button class="btn btn-primary" id="start">On commence 💝</button>' +
+      '</div>',
+      null
+    );
+    document.getElementById("start").onclick = function(){ screenQ1(); };
+  }
 
-<!-- ═══════════════ LE CERCLE (carrousel 3D) ═══════════════ -->
-<section class="cercle" id="cercle">
-  <div class="cercle__head">
-    <p class="eyebrow reveal">02 — Le Cercle</p>
-    <h2 class="h2 reveal" data-delay="80">Le cercle des <em>fragrances</em></h2>
-    <p class="sub reveal" data-delay="140">
-      Quelques pièces photographiées dans la boutique. Faites tourner le cercle —
-      glissez, cliquez, ou laissez-le dériver.
-    </p>
-  </div>
+  function screenQ1(){
+    render(
+      '<p class="eyebrow">Question 1 / 9</p>' +
+      '<h2 class="question">Est-ce que je te plais ?</h2>' +
+      '<div class="options">' +
+        '<button class="opt big" data-v="oui">Oui</button>' +
+        '<button class="opt big" data-v="non">Non</button>' +
+      '</div>',
+      1
+    );
+    stage.querySelectorAll(".opt").forEach(function(btn){
+      btn.onclick = function(){
+        state.plait = btn.dataset.v;
+        if(btn.dataset.v === "non"){ screenEndNon(); }
+        else { screenQ2(); }
+      };
+    });
+  }
 
-  <div class="stage" id="stage" data-cursor="drag">
-    <div class="stage__glow" aria-hidden="true"></div>
-    <div class="ring" id="ring">
-      <!-- articles injectés en JS depuis data-* pour garder le markup lisible -->
-    </div>
-    <button class="stage__nav stage__nav--prev magnetic" id="ringPrev" aria-label="Fragrance précédente"><i></i></button>
-    <button class="stage__nav stage__nav--next magnetic" id="ringNext" aria-label="Fragrance suivante"><i></i></button>
-  </div>
+  function screenEndNon(){
+    render(
+      '<div class="center-emoji">🤤</div>' +
+      '<h2 class="question" style="text-align:center">Pas grave</h2>' +
+      '<p class="reply-box" style="text-align:center">J\'ai un KFC pour oublier 🍗😅</p>' +
+      '<div class="row-actions">' +
+        '<button class="btn btn-ghost" id="restart">Recommencer</button>' +
+      '</div>',
+      null
+    );
+    document.getElementById("restart").onclick = restartAll;
+  }
 
-  <div class="cercle__caption" id="ringCaption" aria-live="polite">
-    <p class="cercle__family"></p>
-    <h3 class="cercle__name"></h3>
-    <p class="cercle__desc"></p>
-    <ul class="cercle__notes"></ul>
-  </div>
+  function screenQ2(){
+    var html = '<p class="eyebrow">Question 2 / 9</p>' +
+      '<h2 class="question">Qu\'est-ce que tu veux comme type de relation ?</h2>' +
+      '<div class="options">';
+    relationOptions.forEach(function(o){
+      html += '<button class="opt" data-v="'+o.id+'">'+esc(o.label)+'</button>';
+    });
+    html += '</div>';
+    render(html, 2);
+    stage.querySelectorAll(".opt").forEach(function(btn){
+      btn.onclick = function(){
+        state.relation = btn.dataset.v;
+        screenQ2Reply();
+      };
+    });
+  }
 
-  <div class="cercle__dots" id="ringDots" role="tablist" aria-label="Choisir une fragrance"></div>
+  function relationLabel(id){
+    var found = relationOptions.filter(function(o){ return o.id === id; })[0];
+    return found ? found.label : "";
+  }
 
-  <p class="disclaimer reveal">
-    Sélection photographiée en boutique, à titre d'illustration. Les familles et
-    impressions décrites sont notre lecture, pas une fiche technique — et les
-    références évoluent au fil des arrivages.
-    <a href="tel:+33963263393">Appelez-nous</a> pour vérifier une disponibilité.
-  </p>
-</section>
+  function screenQ2Reply(){
+    render(
+      '<p class="eyebrow">Ta réponse : ' + esc(relationLabel(state.relation)) + '</p>' +
+      '<div class="reply-box">' + esc(relationReplies[state.relation]) + '</div>' +
+      '<div class="row-actions">' +
+        '<button class="btn btn-primary" id="next">Suite →</button>' +
+      '</div>',
+      2
+    );
+    document.getElementById("next").onclick = screenQ3;
+  }
 
-<!-- ═══════════════ PYRAMIDE OLFACTIVE ═══════════════ -->
-<section class="pyramide" id="pyramide">
-  <div class="pyramide__inner">
-    <div class="pyramide__text">
-      <p class="eyebrow reveal">03 — Comprendre</p>
-      <h2 class="h2 reveal" data-delay="80">Anatomie d'un <em>sillage</em></h2>
-      <p class="lead reveal" data-delay="140">
-        Un parfum ne se lit pas d'un bloc : il se déplie. Trois temps se succèdent
-        sur la peau, du plus volatil au plus tenace. Survolez chaque étage.
-      </p>
+  function screenQ3(){
+    var html = '<p class="eyebrow">Question 3 / 9</p>' +
+      '<h2 class="question">Qu\'est-ce que tu aimes ?</h2>' +
+      '<p class="sub">Coche tout ce que tu veux</p>' +
+      '<div class="options">';
+    likeOptions.forEach(function(label, i){
+      var checked = state.likes.indexOf(label) > -1;
+      html += '<button class="opt'+(checked?' checked':'')+'" data-i="'+i+'">' +
+        '<span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' +
+        esc(label) + '</button>';
+    });
+    html += '</div>' +
+      '<div class="row-actions">' +
+        '<button class="btn btn-primary" id="next">Valider</button>' +
+      '</div>';
+    render(html, 3);
 
-      <div class="layers" id="layers">
-        <button class="layer is-active" data-layer="tete" aria-expanded="true">
-          <span class="layer__idx">I</span>
-          <span class="layer__body">
-            <b>Notes de tête</b>
-            <em>Les 15 premières minutes</em>
-            <p>La première impression, vive et fugace. Agrumes, aromates, notes vertes et pétillantes qui s'évaporent vite.</p>
-          </span>
-        </button>
-        <button class="layer" data-layer="coeur" aria-expanded="false">
-          <span class="layer__idx">II</span>
-          <span class="layer__body">
-            <b>Notes de cœur</b>
-            <em>De 20 minutes à 2 heures</em>
-            <p>Le caractère du parfum. Fleurs, épices, fruits : c'est là que la composition prend son visage.</p>
-          </span>
-        </button>
-        <button class="layer" data-layer="fond" aria-expanded="false">
-          <span class="layer__idx">III</span>
-          <span class="layer__body">
-            <b>Notes de fond</b>
-            <em>Plusieurs heures durant</em>
-            <p>La trace que l'on laisse derrière soi. Bois, oud, ambre, musc, vanille — la mémoire du parfum.</p>
-          </span>
-        </button>
-      </div>
-    </div>
+    stage.querySelectorAll(".opt").forEach(function(btn){
+      btn.onclick = function(){
+        var label = likeOptions[btn.dataset.i];
+        var idx = state.likes.indexOf(label);
+        if(idx > -1){ state.likes.splice(idx,1); btn.classList.remove("checked"); }
+        else { state.likes.push(label); btn.classList.add("checked"); }
+      };
+    });
+    document.getElementById("next").onclick = screenQ3Reply;
+  }
 
-    <div class="pyramide__figure" aria-hidden="true">
-      <svg class="pyr" viewBox="0 0 320 300" id="pyr">
-        <defs>
-          <linearGradient id="gTete" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#ffe9a8"/><stop offset="1" stop-color="#d9a94b"/>
-          </linearGradient>
-          <linearGradient id="gCoeur" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#ff8ad8"/><stop offset="1" stop-color="#b3239a"/>
-          </linearGradient>
-          <linearGradient id="gFond" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#8a5cd6"/><stop offset="1" stop-color="#3a1a55"/>
-          </linearGradient>
-        </defs>
-        <g class="pyr__g">
-          <path class="pyr__face" data-face="fond"  d="M20 268h280L246 196H74Z"  fill="url(#gFond)"/>
-          <path class="pyr__face" data-face="coeur" d="M74 188h172l-40-72H114Z"  fill="url(#gCoeur)"/>
-          <path class="pyr__face" data-face="tete"  d="M114 108h92L160 22Z"       fill="url(#gTete)"/>
-        </g>
-        <g class="pyr__labels" fill="currentColor" font-size="11" letter-spacing="3">
-          <text x="160" y="99"  text-anchor="middle" data-face="tete">TÊTE</text>
-          <text x="160" y="170" text-anchor="middle" data-face="coeur">CŒUR</text>
-          <text x="160" y="246" text-anchor="middle" data-face="fond">FOND</text>
-        </g>
-      </svg>
-      <div class="pyr__wisps"><i></i><i></i><i></i><i></i><i></i></div>
-    </div>
-  </div>
-</section>
+  function screenQ3Reply(){
+    var listText = state.likes.length
+      ? state.likes.map(function(l){ return "• " + esc(l); }).join("<br>")
+      : "• rien du tout (mystérieuse 😏)";
+    render(
+      '<div class="reply-box">Cool ça, moi j\'aime aussi :<br><br>' + listText + '<br><br>Quelle coïncidence 😅</div>' +
+      '<div class="row-actions">' +
+        '<button class="btn btn-primary" id="next">Suite →</button>' +
+      '</div>',
+      3
+    );
+    document.getElementById("next").onclick = screenQ4;
+  }
 
-<!-- ═══════════════ LA BOUTIQUE ═══════════════ -->
-<section class="boutique" id="boutique">
-  <div class="boutique__head">
-    <p class="eyebrow reveal">04 — La Boutique</p>
-    <h2 class="h2 reveal" data-delay="80">42, avenue de <em>Grammont</em></h2>
-    <p class="sub reveal" data-delay="140">Une vitrine rose au milieu de la pierre tourangelle. Poussez la porte.</p>
-  </div>
+  function screenScale(opts){
+    // opts: {step, title, sub, key, next}
+    render(
+      '<p class="eyebrow">Question ' + opts.step + ' / 9</p>' +
+      '<h2 class="question">' + opts.title + '</h2>' +
+      (opts.sub ? '<p class="sub">' + opts.sub + '</p>' : '') +
+      '<div class="scale-value" id="scaleVal">' + state[opts.key] + '<span>/10</span></div>' +
+      '<input type="range" id="scaleInput" min="0" max="10" step="1" value="' + state[opts.key] + '">' +
+      '<div class="scale-labels"><span>0</span><span>10</span></div>' +
+      '<div class="row-actions">' +
+        '<button class="btn btn-primary" id="next">Suite →</button>' +
+      '</div>',
+      opts.step
+    );
+    var input = document.getElementById("scaleInput");
+    var val = document.getElementById("scaleVal");
+    input.oninput = function(){
+      state[opts.key] = Number(input.value);
+      val.innerHTML = input.value + "<span>/10</span>";
+    };
+    document.getElementById("next").onclick = opts.next;
+  }
 
-  <div class="mosaic">
-    <figure class="tile tile--tall reveal-mask" data-lightbox data-cursor="zoom">
-      <img src="assets/img/boutique-nuit.jpg" alt="La devanture éclairée de nuit, guirlandes et vitrine garnie">
-      <figcaption>La devanture, à la nuit tombée</figcaption>
-    </figure>
-    <figure class="tile reveal-mask" data-delay="90" data-lightbox data-cursor="zoom">
-      <img src="assets/img/boutique-jour.jpg" alt="L'enseigne rose Mystère Fragrances, d'ici et d'ailleurs, en plein jour">
-      <figcaption>L'enseigne, avenue de Grammont</figcaption>
-    </figure>
-    <figure class="tile reveal-mask" data-delay="160" data-lightbox data-cursor="zoom">
-      <img src="assets/img/interieur-rayons.jpg" alt="L'angle des rayonnages, flacons alignés sur des étagères blanches">
-      <figcaption>L'angle des flacons</figcaption>
-    </figure>
-    <figure class="tile tile--wide reveal-mask" data-delay="230" data-lightbox data-cursor="zoom">
-      <img src="assets/img/interieur-diffuseurs.jpg" alt="Mur de diffuseurs, bougies et eaux de parfum devant les lattes de bois">
-      <figcaption>Diffuseurs, bougies &amp; brumes</figcaption>
-    </figure>
-  </div>
-</section>
+  function screenQ4(){
+    screenScale({step:4, title:"Sur 10, tu notes ma prestation ?", key:"noteprestation", next:screenQ5});
+  }
+  function screenQ5(){
+    screenScale({step:5, title:"Sur 10, tu notes la soirée en boîte qu\'on a passée ensemble ?", key:"noteboite", next:screenQ6});
+  }
+  function screenQ6(){
+    screenScale({step:6, title:"Sur 10, tu me notes en attirance ?", key:"noteattirance", next:screenQ7});
+  }
+  function screenQ7(){
+    screenScale({step:7, title:"Sur 10, tu notes la possibilité qu\'on sorte ensemble ?", key:"notesortir", next:screenQ8});
+  }
 
-<!-- ═══════════════ AVIS ═══════════════ -->
-<section class="avis" id="avis">
-  <div class="avis__inner">
-    <div class="avis__score reveal">
-      <b>5,0</b>
-      <span class="stars" aria-label="5 étoiles sur 5">
-        <svg viewBox="0 0 24 24"><use href="#i-star"></use></svg><svg viewBox="0 0 24 24"><use href="#i-star"></use></svg><svg viewBox="0 0 24 24"><use href="#i-star"></use></svg><svg viewBox="0 0 24 24"><use href="#i-star"></use></svg><svg viewBox="0 0 24 24"><use href="#i-star"></use></svg>
-      </span>
-      <em>20 avis Google</em>
-    </div>
-    <div class="avis__quotes">
-      <blockquote class="reveal" data-delay="100">
-        <p>« Les visiteurs disent que l'équipe est accueillante et de très bon conseil. »</p>
-        <cite>Synthèse des avis — Google</cite>
-      </blockquote>
-      <blockquote class="reveal" data-delay="200">
-        <p>« Les clients soulignent la grande variété de parfums de qualité pour tous les budgets. »</p>
-        <cite>Synthèse des avis — Google</cite>
-      </blockquote>
-    </div>
-  </div>
-</section>
+  function screenQ8(){
+    render(
+      '<p class="eyebrow">Question 8 / 9</p>' +
+      '<h2 class="question">Waouh 😮 Et comment serait l\'homme idéal pour toi ?</h2>' +
+      '<textarea id="idealInput" placeholder="Écris tout ce que tu veux…">' + esc(state.hommeideal) + '</textarea>' +
+      '<div class="row-actions">' +
+        '<button class="btn btn-primary" id="next">Suite →</button>' +
+      '</div>',
+      8
+    );
+    document.getElementById("next").onclick = function(){
+      state.hommeideal = document.getElementById("idealInput").value.trim();
+      screenQ8Reply();
+    };
+  }
 
-<!-- ═══════════════ VISITE / CONTACT ═══════════════ -->
-<section class="visite" id="visite">
-  <div class="visite__head">
-    <p class="eyebrow reveal">05 — Nous trouver</p>
-    <h2 class="h2 reveal" data-delay="80">Venez <em>sentir</em></h2>
-    <p class="sub reveal" data-delay="140">
-      Le parfum ne se choisit pas derrière un écran. Passez, on vous fera essayer.
-    </p>
-  </div>
+  function screenQ8Reply(){
+    render(
+      '<div class="reply-box">Je t\'ai dit l\'homme parfait, pas moi 😉</div>' +
+      '<div class="row-actions">' +
+        '<button class="btn btn-primary" id="next">Suite →</button>' +
+      '</div>',
+      8
+    );
+    document.getElementById("next").onclick = screenQ9;
+  }
 
-  <div class="visite__grid">
+  function screenQ9(){
+    render(
+      '<p class="eyebrow">Question 9 / 9</p>' +
+      '<h2 class="question">T\'as aimé ce questionnaire ?</h2>' +
+      '<div class="options">' +
+        '<button class="opt big" data-v="oui">Oui</button>' +
+        '<button class="opt big" data-v="non">Non</button>' +
+      '</div>',
+      9
+    );
+    stage.querySelectorAll(".opt").forEach(function(btn){
+      btn.onclick = function(){
+        state.aime = btn.dataset.v;
+        screenFinal();
+      };
+    });
+  }
 
-    <article class="card card--hours reveal">
-      <header class="card__top">
-        <svg class="card__ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-clock"></use></svg>
-        <h3>Horaires</h3>
-        <span class="badge" id="openBadge" data-cursor="link"><i></i><span>—</span></span>
-      </header>
-      <table class="hours" id="hours">
-        <tbody>
-          <tr data-day="1"><th scope="row">Lundi</th><td>10:30 – 13:30<i>·</i>14:30 – 19:30</td></tr>
-          <tr data-day="2"><th scope="row">Mardi</th><td>10:30 – 13:30<i>·</i>14:30 – 19:30</td></tr>
-          <tr data-day="3"><th scope="row">Mercredi</th><td>10:30 – 13:30<i>·</i>14:30 – 19:30</td></tr>
-          <tr data-day="4"><th scope="row">Jeudi</th><td>10:30 – 13:30<i>·</i>14:30 – 19:30</td></tr>
-          <tr data-day="5"><th scope="row">Vendredi</th><td>10:30 – 13:30<i>·</i>14:30 – 19:30</td></tr>
-          <tr data-day="6"><th scope="row">Samedi</th><td>10:30 – 13:30<i>·</i>14:30 – 19:30</td></tr>
-          <tr data-day="0" class="is-closed"><th scope="row">Dimanche</th><td>Fermé</td></tr>
-        </tbody>
-      </table>
-      <p class="card__foot">Fermeture méridienne de 13:30 à 14:30.</p>
-    </article>
+  function buildRecap(plain){
+    var rows = [
+      ["Est-ce que je te plais ?", state.plait === "oui" ? "Oui" : "Non"],
+      ["Type de relation voulu", relationLabel(state.relation)],
+      ["Ce qu'elle aime", state.likes.length ? state.likes.join(", ") : "(rien coché)"],
+      ["Note de sa prestation /10", state.noteprestation],
+      ["Note de la soirée en boîte /10", state.noteboite],
+      ["Note d'attirance /10", state.noteattirance],
+      ["Note de chance de sortir ensemble /10", state.notesortir],
+      ["Homme idéal", state.hommeideal || "(pas de réponse)"],
+      ["A aimé le questionnaire ?", state.aime === "oui" ? "Oui" : "Non"]
+    ];
+    if(plain){
+      return rows.map(function(r){ return r[0] + " : " + r[1]; }).join("\n");
+    }
+    return rows.map(function(r){
+      return '<div class="recap-item"><div class="recap-q">' + esc(r[0]) + '</div><div class="recap-a">' + esc(String(r[1])) + '</div></div>';
+    }).join("");
+  }
 
-    <article class="card card--contact reveal" data-delay="100">
-      <header class="card__top">
-        <svg class="card__ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pin"></use></svg>
-        <h3>L'adresse</h3>
-      </header>
-      <address>
-        <span class="addr">42 avenue de Grammont</span>
-        <span class="addr">37000 Tours</span>
-      </address>
-      <div class="card__links">
-        <a class="line-link magnetic" href="https://www.google.com/maps/search/?api=1&query=Myst%C3%A8re+Fragrances+42+Avenue+de+Grammont+37000+Tours" target="_blank" rel="noopener" data-cursor="link">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-pin"></use></svg>
-          <span>Ouvrir dans Google Maps</span>
-        </a>
-        <a class="line-link magnetic" href="tel:+33963263393" data-cursor="link">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-phone"></use></svg>
-          <span>09 63 26 33 93</span>
-        </a>
-        <a class="line-link magnetic" href="https://www.tiktok.com/@mysterefragrances.37" target="_blank" rel="noopener" data-cursor="link">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tiktok"></use></svg>
-          <span>@mysterefragrances.37</span>
-        </a>
-      </div>
-    </article>
+  function screenFinal(){
+    var subject = encodeURIComponent("Mes réponses au questionnaire 💌");
+    var body = encodeURIComponent(buildRecap(true) + "\n\n— envoyé depuis le petit questionnaire");
+    var mailto = "mailto:paulmedina37510@gmail.com?subject=" + subject + "&body=" + body;
 
-    <article class="card card--map reveal" data-delay="180">
-      <a class="map" href="https://www.google.com/maps/search/?api=1&query=Myst%C3%A8re+Fragrances+42+Avenue+de+Grammont+37000+Tours" target="_blank" rel="noopener" data-cursor="link" aria-label="Voir Mystère Fragrances sur Google Maps">
-        <span class="map__grid" aria-hidden="true"></span>
-        <span class="map__road map__road--v" aria-hidden="true"></span>
-        <span class="map__road map__road--h" aria-hidden="true"></span>
-        <span class="map__pin" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-pin"></use></svg></span>
-        <span class="map__label">
-          <b>Mystère Fragrances</b>
-          <em>42 av. de Grammont · Tours</em>
-        </span>
-      </a>
-    </article>
+    render(
+      '<div class="center-emoji">💖</div>' +
+      '<h2 class="question" style="text-align:center">Merci d\'avoir joué le jeu</h2>' +
+      '<div class="recap">' + buildRecap(false) + '</div>' +
+      '<div class="row-actions">' +
+        '<a class="btn btn-primary" id="mailBtn" href="' + mailto + '">Lui envoyer mes réponses ✉️</a>' +
+        '<button class="btn btn-ghost" id="copyBtn">Copier mes réponses</button>' +
+        '<button class="btn btn-ghost" id="restart">Recommencer</button>' +
+      '</div>',
+      9
+    );
 
-  </div>
-</section>
+    document.getElementById("copyBtn").onclick = function(){
+      var text = buildRecap(true);
+      try{
+        navigator.clipboard.writeText(text).then(function(){
+          showToast("Copié ✓ tu peux le coller dans un message");
+        }).catch(function(){
+          showToast("Impossible de copier, envoie plutôt par mail");
+        });
+      }catch(e){
+        showToast("Impossible de copier, envoie plutôt par mail");
+      }
+    };
+    document.getElementById("restart").onclick = restartAll;
+  }
 
-<!-- ═══════════════ TIKTOK ═══════════════ -->
-<section class="social">
-  <a class="social__card magnetic" href="https://www.tiktok.com/@mysterefragrances.37" target="_blank" rel="noopener" data-cursor="link">
-    <svg class="social__ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-tiktok"></use></svg>
-    <span class="social__txt">
-      <b>Les arrivages, en vidéo</b>
-      <em>@mysterefragrances.37 sur TikTok</em>
-    </span>
-    <span class="social__arrow" aria-hidden="true">↗</span>
-  </a>
-</section>
+  function restartAll(){
+    state = {
+      plait: null, relation: null, likes: [],
+      noteprestation: 5, noteboite: 5, noteattirance: 5, notesortir: 5,
+      hommeideal: "", aime: null
+    };
+    screenWelcome();
+  }
 
-</main>
-
-<!-- ═══════════════ PIED DE PAGE ═══════════════ -->
-<footer class="foot">
-  <div class="foot__top">
-    <div class="foot__brand">
-      <svg class="foot__mark" viewBox="0 0 64 64" aria-hidden="true"><use href="#flacon"></use></svg>
-      <p class="foot__name">Mystère Fragrances</p>
-      <p class="foot__tag">D'ici et d'ailleurs</p>
-    </div>
-    <div class="foot__col">
-      <h4>La boutique</h4>
-      <p>42 avenue de Grammont<br>37000 Tours</p>
-      <p>Lundi – Samedi<br>10:30 – 13:30 · 14:30 – 19:30</p>
-    </div>
-    <div class="foot__col">
-      <h4>Nous joindre</h4>
-      <p><a href="tel:+33963263393">09 63 26 33 93</a></p>
-      <p><a href="https://www.tiktok.com/@mysterefragrances.37" target="_blank" rel="noopener">@mysterefragrances.37</a></p>
-      <p><a href="https://www.google.com/maps/search/?api=1&query=Myst%C3%A8re+Fragrances+42+Avenue+de+Grammont+37000+Tours" target="_blank" rel="noopener">Itinéraire</a></p>
-    </div>
-    <div class="foot__col">
-      <h4>Aller à</h4>
-      <p><a href="#essence">L'Essence</a></p>
-      <p><a href="#cercle">Le Cercle</a></p>
-      <p><a href="#boutique">La Boutique</a></p>
-      <p><a href="#visite">Nous trouver</a></p>
-    </div>
-  </div>
-  <div class="foot__bar">
-    <p>© <span id="year">2026</span> Mystère Fragrances — Tours</p>
-    <p class="foot__ps">Photographies prises en boutique.</p>
-  </div>
-</footer>
-
-<!-- ═══════════════ LIGHTBOX ═══════════════ -->
-<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Photo agrandie">
-  <button class="lightbox__close" id="lbClose" aria-label="Fermer">✕</button>
-  <figure><img id="lbImg" src="" alt=""><figcaption id="lbCap"></figcaption></figure>
-</div>
-
-<script src="assets/js/main.js" defer></script>
+  screenWelcome();
+})();
+</script>
 </body>
 </html>
